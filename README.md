@@ -1,6 +1,6 @@
 # Introduction
 
-<img src="https://github.com/alexstan67/safe-prints/blob/master/app/assets/images/plane.svg" width="200" />
+<img src="https://github.com/alexstan67/safe-prints/blob/master/app/assets/images/plane.png" width="200" />
 
 For General Aviation fellows, find a destination !
 
