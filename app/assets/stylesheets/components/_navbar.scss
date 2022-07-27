@@ -1,0 +1,33 @@
+.navbar-container {
+  height: 64px;
+  width: auto;
+  padding: 0px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.light {
+  background-color: $light;
+  color: $secondary;
+}
+
+.dark {
+  background-color: $dark;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.sticky + .container {
+  padding-top: 60px;
+}
+
