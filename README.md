@@ -15,6 +15,10 @@ For General Aviation fellows, find a destination !
 Create a .env file with following keys:
 `MAPBOX_API_KEY=`
 `CLOUDINARY_URL=`
+`MAIL_USERNAME=`
+`MAIL_PASSWORD=`
+`MAIL_DOMAIN=`
+`MAIL_SMTP_SERVER=`
 
 `bundle install`
 
