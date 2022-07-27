@@ -38,7 +38,7 @@
 
 .card-product-title {
   font-size: 24px;
-  color: #212529;
+  color: $dark;
   margin: 10px 0px 0px 0px;
 }
 
@@ -74,7 +74,7 @@
 
 .card-trip-title {
   font-size: 18px;
-  color: #212529;
+  color: $dark;
   margin: 10px 0px 0px 0px;
 }
 
@@ -97,7 +97,7 @@
 .card-trip-price p {
   font-weight: 700;
   font-size: 16px;
-  color: #212529;
+  color: $dark;
   margin-top: 5px;
   margin-bottom: 5px;
   text-align: end;

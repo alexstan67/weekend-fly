@@ -10,7 +10,7 @@
 }
 
 .active {
-  background-color: #0b5ed7;
+  background-color: $primary_bis;
   border-radius: 7px;
   color: white !important;
 }
@@ -19,11 +19,11 @@
   text-decoration: none;
   transition: 0.25s;
   padding: 10px;
-  color: #6c757d;
+  color: $secondary;
 }
 
 .nav-link:hover {
-  color: #0b5ed7;
+  color: $primary_bis;
   transition: 0.25s;
 }
 

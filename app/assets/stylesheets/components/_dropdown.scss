@@ -8,7 +8,7 @@
 
 /* Dropdown button on hover & focus */
 .dropbtn:hover, .dropbtn:focus {
-  color: #0d6efd;
+  color: $primary;
   transition: 0.25s;
 }
 
@@ -23,7 +23,7 @@
   display: none;
   position: absolute;
   top: 40px;
-  border: solid 1px #d2d2d2;
+  border: solid 1px $secondary;
   background-color: white;
   border-radius: 5px;
   min-width: 160px;
@@ -33,7 +33,7 @@
 
 /* Links inside the dropdown */
 .dropdown-content a {
-  color:#6c757d;
+  color:$secondary;
   padding: 8px 16px;
   text-decoration: none;
   display: block;
@@ -41,7 +41,7 @@
 
 /* Change color of dropdown links on hover */
 .dropdown-content a:hover {
-  background-color: #0d6efd;
+  background-color: $primary;
   color:white;
 }
 
@@ -52,6 +52,6 @@
 
 .dropdown-divider {
   height: 1px;
-  background: #d2d2d2;
+  background: $secondary;
   margin: 0px 15px;
 }
