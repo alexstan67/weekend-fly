@@ -1,0 +1,123 @@
+.btn {
+  padding: 10px 16px;
+  border-radius: 7px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.btn-full-width {
+  width: 100%; 
+}
+
+.btn-primary {
+  color: $light;
+  text-decoration: none;
+  background-color: $success;
+  border: 1px solid $success;
+  transition: 0.25s;
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+  transition: 0.25s;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  color: white;
+  text-decoration: none;
+  background-color: #6c757d;
+  border: 1px solid #6c757d;
+  transition: 0.25s;
+}
+
+.btn-secondary:hover {
+  background-color: #5c636a;
+  transition: 0.25s;
+  cursor: pointer;
+}
+
+.btn-success {
+  color: white;
+  text-decoration: none;
+  background-color: #198754;
+  border: 1px solid #198754;
+  transition: 0.25s;
+}
+
+.btn-success:hover {
+  background-color: #157347;
+  transition: 0.25s;
+  cursor: pointer;
+}
+
+.btn-danger {
+  color: white;
+  text-decoration: none;
+  background-color: #dc3545;
+  border: 1px solid #dc3545;
+  transition: 0.25s;
+}
+
+.btn-danger:hover {
+  background-color: #bb2d3b;
+  transition: 0.25s;
+  cursor: pointer;
+}
+
+.btn-warning {
+  color: black;
+  text-decoration: none;
+  background-color: #ffc107;
+  border: 1px solid #ffc107;
+  transition: 0.25s;
+}
+
+.btn-warning:hover {
+  background-color: #ffca2c;
+  transition: 0.25s;
+  cursor: pointer;
+}
+
+.btn-info {
+  color: black;
+  text-decoration: none;
+  background-color: #0dcaf0;
+  border: 1px solid #0dcaf0;
+  transition: 0.25s;
+}
+
+.btn-info:hover {
+  background-color: #31d2f2;
+  transition: 0.25s;
+  cursor: pointer;
+}
+
+.btn-light {
+  color: black;
+  text-decoration: none;
+  background-color: #f8f9fa;
+  border: 1px solid #f8f9fa;
+  transition: 0.25s;
+}
+
+.btn-light:hover {
+  background-color: #f8f9fa;
+  transition: 0.25s;
+  cursor: pointer;
+}
+
+.btn-dark {
+  color: white;
+  text-decoration: none;
+  background-color: #212529;
+  border: 1px solid #212529;
+  transition: 0.25s;
+}
+
+.btn-dark:hover {
+  background-color: #212529;
+  transition: 0.25s;
+  cursor: pointer;
+}
+

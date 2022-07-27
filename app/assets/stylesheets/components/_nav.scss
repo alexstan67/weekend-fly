@@ -1,0 +1,33 @@
+.nav {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  padding: 0px;
+}
+
+.nav-item {
+  padding: 0px 5px;
+}
+
+.active {
+  background-color: #0b5ed7;
+  border-radius: 7px;
+  color: white !important;
+}
+
+.nav-link {
+  text-decoration: none;
+  transition: 0.25s;
+  padding: 10px;
+  color: #6c757d;
+}
+
+.nav-link:hover {
+  color: #0b5ed7;
+  transition: 0.25s;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.4;
+}
