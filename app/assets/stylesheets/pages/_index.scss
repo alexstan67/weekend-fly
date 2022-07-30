@@ -24,7 +24,12 @@ h3 {
   font-weight: 400;
   color: $secondary;
 }
+.text-light {
+  color: $light;
+}
 
-
+.text-dark {
+  color: $dark;
+}
 // Import page-specific CSS files here
 @import "home";
