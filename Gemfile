@@ -43,7 +43,7 @@ gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 gem "bootsnap", require: false
 
 # Additional GEMs
-gem "devise"
+gem "devise", github: "heartcombo/devise", branch: "main"
 gem "dotenv-rails"
 
 # Use Sass to process CSS
