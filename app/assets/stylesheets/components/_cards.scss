@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 5px 5px 5px;
+  box-shadow: $box-shadow $box-shadow $box-shadow;
   border-radius: $border-radius;
   margin: 5px;
 }
@@ -14,7 +14,7 @@
 
 .card-product {
   display: flex;
-  box-shadow: 5px 5px 5px;
+  box-shadow: $box-shadow $box-shadow $box-shadow;
   margin: 5px;
 }
 
@@ -44,7 +44,7 @@
 
 .card-trip {
   margin: 5px;
-  box-shadow: 5px 5px 5px;
+  box-shadow: $box-shadow $box-shadow $box-shadow;
   display: flex;
   flex-direction: column;
 }
