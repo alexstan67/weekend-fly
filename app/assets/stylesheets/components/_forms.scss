@@ -21,6 +21,15 @@
   em {
     color: $dark;
   }
+  li {
+    color: $danger;
+  }
+  p {
+    color: $secondary;
+  }
+  i {
+    color: $secondary;
+  }
 }
 
 .forms-dark {
@@ -34,6 +43,15 @@
   }
   em {
     color: $light;
+  }
+  li {
+    color: $danger;
+  }
+  p {
+    color: $secondary;
+  }
+  i {
+    color: $secondary;
   }
 }
 
