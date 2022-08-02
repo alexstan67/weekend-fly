@@ -1,0 +1,100 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 64px);
+}
+.container-text {
+  padding-left: 20px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  background-color: $light;
+  width: 80vw;
+  height: 100%;
+}
+.container-text-title {
+  h1 {
+    color: $color1;
+    font-weight: 600;
+  }
+}
+.container-text-slogan {
+  h2 {
+    color: $color1;
+    font-weight: 400;
+  }
+  em {
+    color: $primary;
+    font-style: normal;
+    font-weight: 500;
+  }
+}
+.container-image {
+  width: 100%;
+  background-image: url("william-topa-7_4bU5tHRLQ-unsplash.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
+}
+article {
+  height: calc((100vh / 2) - 40px);
+  background-color: $light;
+  h1 {
+    color: $dark;
+    text-align: center;
+    font-weight: 200;
+  }
+  h2 {
+    color: $dark;
+    text-align: center;
+  }
+} 
+.how {
+  background-color: $light;
+}
+.why {
+  background-color: $color3;
+}
+.article-container {
+  display: flex;
+  justify-content: space-around;
+}
+.article-container-element {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  min-width: 300px;
+  h3 {
+    color: $dark;
+  }
+}
+.article-container-element-logo {
+  margin-top: 20px;
+}
+.article-container-element-text {
+  font-size: 18px;
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+  min-height: 180px;
+  max-width: 350px;
+  text-align: center;
+}
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+  color: $light;
+  background-color: $color1;
+}
+.footer-right {
+  text-align: right;
+}
+.email {
+  text-decoration: none;
+  text-decoration: underline;
+  color: $light;
+}
