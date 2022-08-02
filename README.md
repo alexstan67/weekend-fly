@@ -34,5 +34,7 @@ Feel free to customize `config/database.yml` following your requirements.
 
 `rails db:seed`
 
+`rake import:airports`
+
 ## License
 All rights reserved.
