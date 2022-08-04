@@ -4,11 +4,9 @@
   text-align: center;
   font-size: 16px;
 }
-
 .btn-full-width {
   width: 100%; 
 }
-
 .btn-primary {
   color: $light;
   text-decoration: none;
@@ -16,13 +14,11 @@
   border: 1px solid $primary;
   transition: 0.25s;
 }
-
 .btn-primary:hover {
   background-color: $primary_bis;
   transition: 0.25s;
   cursor: pointer;
 }
-
 .btn-secondary {
   color: white;
   text-decoration: none;
@@ -30,13 +26,11 @@
   border: 1px solid $secondary;
   transition: 0.25s;
 }
-
 .btn-secondary:hover {
   background-color: $secondary_bis;
   transition: 0.25s;
   cursor: pointer;
 }
-
 .btn-success {
   color: white;
   text-decoration: none;
@@ -44,13 +38,11 @@
   border: 1px solid $success;
   transition: 0.25s;
 }
-
 .btn-success:hover {
   background-color: $success_bis;
   transition: 0.25s;
   cursor: pointer;
 }
-
 .btn-danger {
   color: white;
   text-decoration: none;
@@ -58,13 +50,11 @@
   border: 1px solid $danger;
   transition: 0.25s;
 }
-
 .btn-danger:hover {
   background-color: $danger_bis;
   transition: 0.25s;
   cursor: pointer;
 }
-
 .btn-warning {
   color: black;
   text-decoration: none;
@@ -72,13 +62,11 @@
   border: 1px solid $warning;
   transition: 0.25s;
 }
-
 .btn-warning:hover {
   background-color: $warning_bis;
   transition: 0.25s;
   cursor: pointer;
 }
-
 .btn-info {
   color: black;
   text-decoration: none;
@@ -86,13 +74,11 @@
   border: 1px solid $info;
   transition: 0.25s;
 }
-
 .btn-info:hover {
   background-color: $info_bis;
   transition: 0.25s;
   cursor: pointer;
 }
-
 .btn-light {
   color: black;
   text-decoration: none;
@@ -100,13 +86,11 @@
   border: 1px solid $light;
   transition: 0.25s;
 }
-
 .btn-light:hover {
   background-color: $light_bis;
   transition: 0.25s;
   cursor: pointer;
 }
-
 .btn-dark {
   color: white;
   text-decoration: none;
@@ -114,10 +98,8 @@
   border: 1px solid $dark;
   transition: 0.25s;
 }
-
 .btn-dark:hover {
   background-color: $dark_bis;
   transition: 0.25s;
   cursor: pointer;
 }
-
