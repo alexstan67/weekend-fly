@@ -1,10 +1,16 @@
 <% if notice %> 
-  <div class="alerts alert-info">
-    <p><%= notice %></p>
+  <div class="alerts alert-info" data-controller="alerts" data-alerts-target="button">
+    <button data-action="click -> alerts#close" class="alerts-btn-close alerts-color-info"><i data-feather="x-circle"></i></button>
+    <%= notice %>
   </div>
 <% end %>
 <% if alert %>  
-  <div class="alerts alert-danger">
-    <p><%= alert %></p>
+  <div class="alerts alert-danger" data-controller="alerts" data-alerts-target="button">
+    <button data-action="click -> alerts#close" class="alerts-btn-close alerts-color-danger"><i data-feather="x-circle"></i></button>
+    <%= alert %>
   </div> 
 <% end %>
+
+<script>
+  feather.replace()
+</script>

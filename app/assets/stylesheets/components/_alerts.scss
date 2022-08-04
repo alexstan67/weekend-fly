@@ -1,6 +1,15 @@
 .alerts {
-  padding: 0px;
+  padding: 5px 15px 5px 0px;
+  position: fixed;
+  top: 65px;
+  z-index: 1000;
   border-radius: $border-radius;
+  display: flex;
+  align-items: center;
+}
+.alerts-dismss {
+  display: none;
+  visibility: hidden;
 }
 .alert-danger {
   color: #8d2d36;
@@ -19,4 +28,18 @@
 }
 .alerts p {
   padding-left: 10px;
+}
+.alerts-btn-close {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+.alerts-color-danger {
+  color: #8d2d36;
+}
+.alerts-color-info {
+  color: #055160;
+}
+.alerts-color-success {
+  color: #115334;
 }
