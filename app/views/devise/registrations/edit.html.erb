@@ -34,7 +34,7 @@
 
     <div class="forms-element">
       <%= f.label :distance_unit %><br />
-      <%= f.text_field :distance_unit %>
+      <%= f.select :distance_unit, [ "km", "nm" ] %>
     </div>
 
     <div class="forms-submit">
