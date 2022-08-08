@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_02_141949) do
+ActiveRecord::Schema[7.0].define(version: 2022_08_08_083423) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -24,6 +24,17 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_02_141949) do
     t.float "longitude"
     t.integer "altitude"
     t.string "dst"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "trip_params", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "dep_airport_id", null: false
+    t.integer "dep_in_hour", null: false
+    t.integer "distance_nm", null: false
+    t.integer "eet_min", null: false
+    t.integer "average_gs_kts", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -50,7 +61,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_02_141949) do
     t.datetime "updated_at", null: false
     t.string "first_name"
     t.string "last_name"
-    t.string "homebase"
     t.string "distance_unit", default: "km"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
