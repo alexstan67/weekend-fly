@@ -8,6 +8,5 @@ class User < ApplicationRecord
 
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :homebase, presence: true, format: { with: /[a-zA-Z]{4}/, message: "Only valid ICAO Code, example \"ELLX\"" }
   validates :distance_unit, inclusion: CATEGORIES
 end

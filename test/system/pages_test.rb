@@ -42,7 +42,6 @@ class PagesTest < ApplicationSystemTestCase
     visit new_user_registration_url
     fill_in "First name", with: "John"
     fill_in "Last name", with: "Doe"
-    fill_in "Homebase", with: "ELLX"
     fill_in "Email", with: "contact@aerostan.com"
     fill_in "Password", with: "$2a$05$eYS1YRXKD.seFcBZwzfhmesmaejBMgcnbqgjOkT4WBh/pb0l796X6"
     fill_in "Password confirmation", with: "$2a$05$eYS1YRXKD.seFcBZwzfhmesmaejBMgcnbqgjOkT4WBh/pb0l796X6"
