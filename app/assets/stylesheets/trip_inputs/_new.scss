@@ -1,0 +1,17 @@
+.container-trip-info {
+  position: relative;
+  top: calc(100vh / 3);
+  display: flex;
+  flex-direction: column;
+  color: $light;
+  background-color: blue;
+  h1,h2 {
+    color: $light;
+  }
+  em {
+    color: $primary;
+    font-style: normal;
+    font-weight: 500;
+  }
+}
+
