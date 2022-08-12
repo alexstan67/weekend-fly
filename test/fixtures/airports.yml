@@ -1,23 +1,27 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  icao: MyString
-  name: MyString
-  city: MyString
-  country: MyString
+LFAW:
+  icao: LFAW
+  name: Villerupt
+  city: Villerupt
+  country: FR
   iata: MyString
-  latitude: 1.5
-  longitude: 1.5
-  altitude: 1
-  dst: MyString
+  latitude: 49.410424
+  longitude: 5.889301
+  altitude: 1299
+  dst: 
+  continent: EU
+  airport_type: small_airport
 
-two:
-  icao: MyString
-  name: MyString
-  city: MyString
-  country: MyString
-  iata: MyString
-  latitude: 1.5
-  longitude: 1.5
-  altitude: 1
-  dst: MyString
+ELLX:
+  icao: ELLX
+  name: Luxembourg
+  city: Luxembourg
+  country: LU
+  iata: LUX
+  latitude: 49.6233333
+  longitude: 6.2044444
+  altitude: 1234
+  dst: 
+  continent: EU
+  airport_type: large_airport
