@@ -1,10 +1,21 @@
+.container-trip-inputs{
+  background-image: url("jonathan-letniak-oNb7-Bfmho4-unsplash.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: calc(100vh - 64px);
+}
 .container-trip-info {
   position: relative;
   top: calc(100vh / 3);
+  padding: 20px;
+  margin-left: 20px;
   display: flex;
   flex-direction: column;
+  background-color: $dark;
+  border-radius: $border-radius;
+  opacity: 0.8;
   color: $light;
-  background-color: blue;
+  width: fit-content;
   h1,h2 {
     color: $light;
   }
@@ -14,4 +25,3 @@
     font-weight: 500;
   }
 }
-

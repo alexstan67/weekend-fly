@@ -1,8 +1,7 @@
-<%#= form_with(model: trip_input) do |f| %>
 <%= form_with model: @trip_input, url: trip_inputs_create_path, data: { turbo: false } do |f| %>
   <% if trip_input.errors.any? %>
     <div class="alert-danger">
-      <p><%= pluralize(trip_input.errors.count, "error") %> prohibited flight data from being processed:</p>
+      <p><%= pluralize(trip_input.errors.count, "error") %> prohibited trip information from being processed:</p>
       <ul>
         <% trip_input.errors.each do |error| %>
           <li><%= error.full_message %></li>
@@ -12,7 +11,7 @@
   <% end %>
   <table>
     <tr>
-      <td><%= f.label :airport_icao %></td>
+      <td><%= f.label "Airport" %></td>
       <td><%= f.collection_select :dep_airport_icao, Airport.order(:name), :icao, :name %></td>
     </tr>
     <tr>
@@ -20,18 +19,19 @@
       <td><%= f.select :dep_in_hour, [1,2,3,4,5,6], { :selected => 3 } %></td>
     </tr>
     <tr>
-      <td><%= f.label "distance (#{current_user.distance_unit})" %></td>
-      <td><%= f.number_field :distance_nm, value: 50 %></td>
+      <td><%= f.label "distance (#{User.find_by(id: current_user.id).distance_unit})" %></td>
+      <td><%= f.number_field :distance_nm %></td>
     </tr>
     <tr>
-      <td><%= f.label "Estimated Enroute Time (min)" %></td>
-      <td><%= f.number_field :eet_min, value: 120 %></td>
+      <td><%= f.label "Estimated Enroute Time (minutes)" %></td>
+      <td><%= f.number_field :eet_min %></td>
     </tr>
     <tr>
       <td><%= f.label "Average Ground Speed (kts)" %></td>
-      <td><%= f.number_field :average_gs_kts, value: 100 %></td>
+      <td><%= f.number_field :average_gs_kts %></td>
     </tr>
   </table>
 
+  <%= link_to "Back", root_path, class:"btn btn-secondary" %>
   <%= f.submit "Next", class: "btn btn-primary" %>
 <% end %>

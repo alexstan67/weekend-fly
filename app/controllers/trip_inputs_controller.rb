@@ -1,6 +1,12 @@
 class TripInputsController < ApplicationController
   def new
     @trip_input = TripInput.new
+    last_input = TripInput.where(user_id: current_user).order(id: :asc).last
+    if last_input.nil?
+      @trip_input.dep_airport_icao = Airport.first.icao
+    else
+      @trip_input.dep_airport_icao = last_input.dep_airport_icao
+    end
   end
 
   def create
@@ -11,7 +17,7 @@ class TripInputsController < ApplicationController
     @trip_input.eet_min = @trip_input.eet_min.to_i
 
     # Distance unit conversion
-    if current_user.distance_unit = "km"
+    if User.find_by(id: current_user.id).distance_unit == "km"
       @trip_input.distance_nm *= 1.852
       @trip_input.distance_nm = @trip_input.distance_nm.to_i
     end
