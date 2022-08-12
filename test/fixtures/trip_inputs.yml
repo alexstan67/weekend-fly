@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  dep_airport_icao: ELLX
+  dep_in_hour: 2
+  distance_nm: 200
+  eet_min: 120
+  average_gs_kts: 100
+
+two:
+  user: two
+  dep_airport_icao: LFGC
+  dep_in_hour: 3
+  distance_nm: 200
+  eet_min: 120
+  average_gs_kts: 100
