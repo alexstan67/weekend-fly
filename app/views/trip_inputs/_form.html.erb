@@ -11,7 +11,7 @@
   <% end %>
   <table>
     <tr>
-      <td><%= f.label "Airport" %></td>
+      <td><%= f.label "Departure Airport" %></td>
       <td><%= f.collection_select :dep_airport_icao, Airport.order(:name), :icao, :name %></td>
     </tr>
     <tr>
@@ -19,16 +19,20 @@
       <td><%= f.select :dep_in_hour, [1,2,3,4,5,6], { :selected => 3 } %></td>
     </tr>
     <tr>
+      <td><%= f.label "Estimated Enroute Time (hours)" %></td>
+      <td><%= f.number_field :eet_hour %></td>
+    </tr>
+    <tr>
       <td><%= f.label "distance (#{User.find_by(id: current_user.id).distance_unit})" %></td>
       <td><%= f.number_field :distance_nm %></td>
     </tr>
     <tr>
-      <td><%= f.label "Estimated Enroute Time (minutes)" %></td>
-      <td><%= f.number_field :eet_min %></td>
+      <td><%= f.label :overnights %></td>
+      <td><%= f.number_field :overnights, in: 0..14, value: 1 %></td>
     </tr>
     <tr>
-      <td><%= f.label "Average Ground Speed (kts)" %></td>
-      <td><%= f.number_field :average_gs_kts %></td>
+      <td><%= f.label "Flight back" %></td>
+      <td><%= f.select :flight_back, ['AM', 'PM'], { :selected => 'AM' } %></td>
     </tr>
   </table>
 

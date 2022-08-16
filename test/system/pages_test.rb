@@ -5,6 +5,7 @@ class PagesTest < ApplicationSystemTestCase
     visit pages_home_url
     assert_selector "nav"
   end
+
   test "visiting the homepage" do
     visit pages_home_url
     assert_selector "h1", text: "Week-end fly"

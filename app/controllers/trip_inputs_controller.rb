@@ -14,13 +14,16 @@ class TripInputsController < ApplicationController
     @trip_input.user_id = current_user.id
     @trip_input.dep_in_hour = @trip_input.dep_in_hour.to_i
     @trip_input.distance_nm = @trip_input.distance_nm.to_i
-    @trip_input.eet_min = @trip_input.eet_min.to_i
+    @trip_input.eet_hour = @trip_input.eet_hour.to_i
 
     # Distance unit conversion
     if User.find_by(id: current_user.id).distance_unit == "km"
       @trip_input.distance_nm *= 1.852
       @trip_input.distance_nm = @trip_input.distance_nm.to_i
     end
+
+    # Indicative GS calculation in kts
+    @trip_input.average_gs_kts = (@trip_input.distance_nm / @trip_input.eet_hour).to_i
 
     # Save
     if @trip_input.save
@@ -34,6 +37,6 @@ class TripInputsController < ApplicationController
   private
 
   def trip_input_params
-    params.require(:trip_input).permit(:user_id, :dep_airport_icao, :dep_in_hour, :distance_nm, :eet_min, :average_gs_kts)
+    params.require(:trip_input).permit(:user_id, :dep_airport_icao, :dep_in_hour, :overnights, :flight_back, :distance_nm, :eet_hour)
   end
 end
