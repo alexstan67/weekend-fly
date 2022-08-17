@@ -1,2 +1,7 @@
 <h1>TripOutputs#index</h1>
 <p>Find me in app/views/trip_outputs/index.html.erb</p>
+Departure Airport: <%= @trip_input.dep_airport_icao %></br>
+<% @result.each do |airport| %>
+  <%= "#{airport.icao} at #{airport.distance.round(2)} km" %></br>
+<% end %>
+
