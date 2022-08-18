@@ -45,6 +45,7 @@ gem "bootsnap", require: false
 # Additional GEMs
 gem "devise", github: "heartcombo/devise", branch: "main"
 gem "dotenv-rails"
+gem "geocoder"
 
 # Use Sass to process CSS
 gem "sassc-rails"
