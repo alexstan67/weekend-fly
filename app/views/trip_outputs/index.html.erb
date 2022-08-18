@@ -1,7 +1,20 @@
-<h1>TripOutputs#index</h1>
-<p>Find me in app/views/trip_outputs/index.html.erb</p>
-Departure Airport: <%= @trip_input.dep_airport_icao %></br>
-<% @result.each do |airport| %>
-  <%= "#{airport.icao} at #{airport.distance.round(2)} km" %></br>
-<% end %>
+<% require "normalize_country" %>
 
+<h1>TripOutputs#index</h1>
+<p>UTC Time:<%= Time.zone.now.to_fs(:long_ordinal) %></p>
+
+<% @result.each do |airport| %>
+  <h2>Way to</h2>
+  <table>
+    <tr>
+      <td><%= image_tag "departures", alt: "departure logo", width: "18" %><%= "#{@trip_input.dep_airport_icao} #{NormalizeCountry(Airport.find_by(icao: @trip_input.dep_airport_icao).country, :to => :emoji)}" %></td>
+      <td><%= "#{airport.distance.round(2)} nm"%></td>
+      <td><%= image_tag "arrivals", alt: "arrival logo", width: "18" %><%= "#{airport.icao} #{NormalizeCountry(airport.country, :to => :emoji)}"%></td>
+    </tr>
+    <tr>
+      <td><%= "#{(Time.zone.now + @trip_input.dep_in_hour.hours).to_fs(:long_ordinal)}" %></td>
+      <td><%= "+ #{@trip_input.eet_hour} h" %></td>
+      <td><%= "#{(Time.zone.now + @trip_input.dep_in_hour.hours + @trip_input.eet_hour.hours).to_fs(:long_ordinal)}" %></td>
+  </table>
+<% end %>
+<a href="https://www.flaticon.com/free-icons/flight" title="flight icons">Flight icons created by Google - Flaticon</a>

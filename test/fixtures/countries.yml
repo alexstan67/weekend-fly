@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+france:
+  name: France
+  alpha2: FR
+  country_code: 250
+
+germany:
+  name: Germany
+  alpha2: DE
+  country_code: 276
