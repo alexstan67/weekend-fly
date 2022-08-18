@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_16_085556) do
+ActiveRecord::Schema[7.0].define(version: 2022_08_18_091042) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -30,6 +30,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_16_085556) do
     t.string "continent"
     t.string "url"
     t.string "local_code"
+  end
+
+  create_table "countries", force: :cascade do |t|
+    t.string "name"
+    t.string "alpha2"
+    t.string "country_code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "trip_inputs", force: :cascade do |t|

@@ -36,7 +36,8 @@ class PagesTest < ApplicationSystemTestCase
     fill_in "Email", with: "john@aerostan.com"
     fill_in "Password", with: "123456"
     click_on "commit"
-    assert_selector ".alerts", text: "You have to confirm your email address before continuing."
+    #assert_selector ".alerts", text: "You have to confirm your email address before continuing."
+    assert_selector ".alerts", text: "Signed in successfully."
   end
 
   test "Sign up user" do
