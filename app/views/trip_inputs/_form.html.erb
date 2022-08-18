@@ -31,7 +31,7 @@
       <td><%= f.number_field :overnights, in: 0..14, value: 1 %></td>
     </tr>
     <tr>
-      <td><%= f.label "Flight back" %></td>
+      <td><%= f.label :flight_back %></td>
       <td><%= f.select :flight_back, ['AM', 'PM'], { :selected => 'AM' } %></td>
     </tr>
   </table>
