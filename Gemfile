@@ -46,6 +46,7 @@ gem "bootsnap", require: false
 gem "devise", github: "heartcombo/devise", branch: "main"
 gem "dotenv-rails"
 gem "geocoder"
+gem "normalize_country"
 
 # Use Sass to process CSS
 gem "sassc-rails"

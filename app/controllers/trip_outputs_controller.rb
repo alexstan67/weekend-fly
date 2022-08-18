@@ -1,4 +1,5 @@
 require_relative '../../lib/assets/ruby_haversine'
+require "normalize_country"
 
 class TripOutputsController < ApplicationController
   def index

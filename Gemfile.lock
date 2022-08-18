@@ -149,6 +149,7 @@ GEM
     nio4r (2.5.8)
     nokogiri (1.13.6-x86_64-linux)
       racc (~> 1.4)
+    normalize_country (0.3.2)
     orm_adapter (0.5.0)
     pg (1.4.1)
     public_suffix (4.0.7)
@@ -256,6 +257,7 @@ DEPENDENCIES
   geocoder
   importmap-rails
   jbuilder
+  normalize_country
   pg (~> 1.1)
   puma (~> 5.0)
   rails (~> 7.0.3)
