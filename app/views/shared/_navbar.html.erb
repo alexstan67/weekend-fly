@@ -1,7 +1,7 @@
 <nav class="navbar-container dark">
   <div class="navbar-left">
       <%= link_to root_path do %>
-        <%= image_tag "icon_plane_light.png", alt: "Weekend-fly logo", class: "avatar-medium" %>
+        <%= image_tag("icon_plane_light.png", alt: "Weekend-fly logo", class: "avatar-medium") %>
       <% end %>
       <% if user_signed_in? %>
         <span class="text-light">Welcome <%= current_user.first_name %></span>
