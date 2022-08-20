@@ -27,7 +27,6 @@ class TripInputsController < ApplicationController
 
     # Save
     if @trip_input.save
-      #redirect_to controller: "trip_outputs", action: "index", id: @trip_input.id
       redirect_to trip_outputs_index_path
     else
       render "new", trip_input: @trip_input
@@ -37,6 +36,6 @@ class TripInputsController < ApplicationController
   private
 
   def trip_input_params
-    params.require(:trip_input).permit(:user_id, :dep_airport_icao, :dep_in_hour, :overnights, :flight_back, :distance_nm, :eet_hour)
+    params.require(:trip_input).permit(:user_id, :dep_airport_icao, :dep_in_hour, :overnights, :flight_back, :distance_nm, :eet_hour, :small_airport, :medium_airport, :large_airport, :international_flight)
   end
 end

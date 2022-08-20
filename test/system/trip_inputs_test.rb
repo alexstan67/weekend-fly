@@ -39,6 +39,7 @@ class TripInputsTest < ApplicationSystemTestCase
     #fill_in :distance_nm, with: "200"
     fill_in "Overnights", with: "3"
     #fill_in :trip_input_flight_back, with: "PM"
+    #fill_in "International flight", with: false
     click_on "Next"
     
     visit trip_outputs_index_url
