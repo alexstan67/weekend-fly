@@ -11,19 +11,19 @@
   <% end %>
   <table>
     <tr>
-      <td><%= f.label "Departure Airport" %></td>
+      <td><%= f.label :dep_airport_icao, "Departure Airport" %></td>
       <td><%= f.collection_select :dep_airport_icao, Airport.order(:name), :icao, :name %></td>
     </tr>
     <tr>
-      <td><%= f.label "departure in (hours)" %></td>
+      <td><%= f.label :dep_in_hour, "departure in (hours)" %></td>
       <td><%= f.select :dep_in_hour, [1,2,3,4,5,6], { :selected => 3 } %></td>
     </tr>
     <tr>
-      <td><%= f.label "Estimated Enroute Time (hours)" %></td>
+      <td><%= f.label :eet_hour, "Estimated Enroute Time (hours)" %></td>
       <td><%= f.number_field :eet_hour %></td>
     </tr>
     <tr>
-      <td><%= f.label "distance (#{User.find_by(id: current_user.id).distance_unit})" %></td>
+      <td><%= f.label :distance_nm, "distance (#{User.find_by(id: current_user.id).distance_unit})" %></td>
       <td><%= f.number_field :distance_nm %></td>
     </tr>
     <tr>
@@ -33,6 +33,22 @@
     <tr>
       <td><%= f.label :flight_back %></td>
       <td><%= f.select :flight_back, ['AM', 'PM'], { :selected => 'AM' } %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :small_airport %></td>
+      <td><%= f.check_box :small_airport %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :medium_airport %></td>
+      <td><%= f.check_box :medium_airport %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :large_airport %></td>
+      <td><%= f.check_box :large_airport %></td>
+    </tr>
+    <tr>
+      <td><%= f.label :international_flight %></td>
+      <td><%= f.check_box :international_flight %></td>
     </tr>
   </table>
 
