@@ -1,7 +1,8 @@
 require 'csv'
 
 namespace :import do
-
+  # -------------- AIRPORTS OLD -----------------
+  # ---------------------------------------------
   desc "Import airports from old csv file"
   task airports_old: :environment do
     filepath = "airports_old.csv"
@@ -18,30 +19,38 @@ namespace :import do
     puts "Imported #{counter} aiports!"
   end
 
-# select country, count(country) from airports group by country order by country;
+  # ---------------- AIRPORTS -------------------
+  # ---------------------------------------------
   desc "Import airports from csv file"
   task airports: :environment do
+    puts "Deleting airports entries..."
+    Airport.destroy_all
     filepath = "airports.csv"
-    imported_countries = [ "IT", "LU", "CZ", "SE", "GB", "IE", "DE", "FI", "SI", "GR", "FR", "EE", "SK", "IS", "DK", "CH", "HU", "NO", "NL", "RO", "AT", "RS", "LT", "BG", "ES", "HR", "BE", "PL" ]
+    puts "Reading #{filepath}..."
+    counter_rejected = 0
     counter = 0
     CSV.foreach(filepath, headers: :first_row) do |row|
-      if imported_countries.include?(row['iso_country']) && !["closed","heliport","balloonport","seaplane_base"].include?(row['type'])
-        airport = Airport.create(icao: row['ident'], name: row['name'], city: row['municipality'], country: row['iso_country'], iata: row['iata_code'], latitude: row['latitude_deg'], longitude: row['longitude_deg'], altitude: row['elevation'], airport_type: row['type'], continent: row['continent'], url: row['home_link'], local_code: row['local_code'])
-        puts "#{id} - #{ident} - #{airport.errors.full_messages.join(",")}" if airport.errors.any?
-        counter += 1 if airport.persisted?
-      end
+      airport = Airport.create(icao: row['ident'], name: row['name'], city: row['municipality'], country: row['iso_country'], iata: row['iata_code'], latitude: row['latitude_deg'], longitude: row['longitude_deg'], altitude: row['elevation'], airport_type: row['type'], continent: row['continent'], url: row['home_link'], local_code: row['local_code'])
+      airport.persisted? ? counter += 1 : counter_rejected += 1
     end
-    puts "Imported #{counter} airports!"
+    puts "Imported #{counter} / #{counter + counter_rejected} airports!"
   end
-  
+
+  # ---------------- COUNTRIES ------------------
+  # ---------------------------------------------
   desc "Import countries from csv file"
   task countries: :environment do
+    puts "Deleting countries entries..."
+    Country.destroy_all
     filepath = "iso-3166-countries-slim2.csv"
+    puts "Reading #{filepath}..."
     counter = 0
     CSV.foreach(filepath, headers: :first_row) do |row|
       country = Country.create(name: row['name'], alpha2: row['alpha-2'], country_code: row['country-code'])
       puts "#{name} - #{airport.errors.full_messages.join(",")}" if country.errors.any?
       counter += 1 if country.persisted?
     end
+    puts "Imported #{counter} countries!"
   end
 end
+
