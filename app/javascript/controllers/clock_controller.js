@@ -13,12 +13,13 @@ export default class extends Controller {
     var hour = date.getHours();
     var min = date.getMinutes();
     var sec = date.getSeconds();
-    console.log(date);
     hour = this.updateTime(hour);
     min = this.updateTime(min);
     sec = this.updateTime(sec);
     this.outputTarget.innerText = hour + ":" + min + ":" + sec;
-    //var t = setTimeout(this.digitalClock(), 1000);
+    setInterval(() => {
+      this.digitalClock()
+    }, 1000);
   }
 
   updateTime(k) {
