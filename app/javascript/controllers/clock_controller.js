@@ -10,16 +10,23 @@ export default class extends Controller {
 
   digitalClock() {
     var date = new Date;
-    var hour = date.getHours();
-    var min = date.getMinutes();
-    var sec = date.getSeconds();
+    
+    var day = date.getUTCDay();
+    var month = date.getUTCMonth() + 1
+    var year = date.getUTCFullYear();
+
+    var hour = date.getUTCHours();
+    var min = date.getUTCMinutes();
+    
+    day = this.updateTime(day);
+    month = this.updateTime(month);
     hour = this.updateTime(hour);
     min = this.updateTime(min);
-    sec = this.updateTime(sec);
-    this.outputTarget.innerText = hour + ":" + min + ":" + sec;
+    
+    this.outputTarget.innerText = day + "-" + month + "-" + year + " | " + hour + ":" + min;
     setInterval(() => {
       this.digitalClock()
-    }, 1000);
+    }, 60000);
   }
 
   updateTime(k) {
