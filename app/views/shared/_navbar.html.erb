@@ -8,7 +8,9 @@
       <% end %>  
       <div data-controller="clock">
         <% if user_signed_in? %>
-          </span><span data-clock-target="output" class="text-color-info ml-10"></span><span class="tag tag-primary">UTC</span>
+          <div style="font-size: 12px">
+          </span><span data-clock-target="output" class="text-color-info ml-10"></span>
+          </div>
         <% end %>  
       </div>
     <!--

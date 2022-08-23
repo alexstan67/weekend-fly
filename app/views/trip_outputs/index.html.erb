@@ -9,7 +9,7 @@
     <tr>
       <td><%= image_tag("departures.png", alt: "departure logo", width: "18") %><%= "#{@trip_input.dep_airport_icao} #{NormalizeCountry(Airport.find_by(icao: @trip_input.dep_airport_icao).country, :to => :emoji)}" %></td>
       <td><%= "#{airport.distance.round(2)} nm"%></td>
-      <td><%= image_tag("arrivals.png", alt: "arrival logo", width: "18") %><%= "#{airport.icao} #{NormalizeCountry(airport.country, :to => :emoji)}"%></td>
+      <td><%= image_tag("arrivals.png", alt: "arrival logo", width: "18") %><%= "#{airport.icao} #{NormalizeCountry(airport.country, :to => :emoji)} (#{airport.airport_type})"%></td>
     </tr>
     <tr>
       <td><%= "#{(Time.zone.now + @trip_input.dep_in_hour.hours).to_fs(:long_ordinal)}" %></td>
