@@ -6,6 +6,11 @@
       <% if user_signed_in? %>
         <span class="text-light">Welcome <%= current_user.first_name %></span>
       <% end %>  
+      <div data-controller="clock">
+        <% if user_signed_in? %>
+          </span><span data-clock-target="output" class="text-color-info ml-10"></span><span class="tag tag-primary">UTC</span>
+        <% end %>  
+      </div>
     <!--
     <ul class="nav">
       <li class="nav-item">
