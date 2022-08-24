@@ -1,7 +1,8 @@
 <% require "normalize_country" %>
 
 <h1>TripOutputs#index</h1>
-<p>UTC Time:<%= Time.zone.now.to_fs(:long_ordinal) %></p>
+
+<%= link_to "Edit", edit_trip_input_path(@trip_input), class:"btn btn-secondary" %>
 
 <% @filtered_airports.each do |airport| %>
   <h2>Way to</h2>

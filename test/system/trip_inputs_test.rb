@@ -2,36 +2,36 @@ require "application_system_test_case"
 
 class TripInputsTest < ApplicationSystemTestCase
   test "redirected if not logged in" do
-    visit trip_inputs_new_url
+    visit new_trip_input_url
     assert_selector "nav"
   end
 
   test "Create a new trip_input" do
     login_as users(:john)
-    visit trip_inputs_new_url
+    visit new_trip_input_url
     assert_selector "h1", text: "Trip Information"
   end
 
   test "Navbar present" do
-    visit trip_inputs_new_url
+    visit new_trip_input_url
     assert_selector "nav"
   end
 
   test "Edit button should be present" do
     login_as users(:john)
-    visit trip_inputs_new_url
+    visit new_trip_input_url
     assert_selector "a", text: "Edit"
   end
 
   test "Back button" do
     login_as users(:john)
-    visit trip_inputs_new_url
+    visit new_trip_input_url
     assert_selector "a", text: "Back"
   end
 
   test "Input Trip Fill Fields" do
     login_as users(:john)
-    visit trip_inputs_new_url
+    visit new_trip_input_url
     #fill_in "Departure airport", with: "LFAW"
     #fill_in "Departure in (hours)", with: "3"
     #fill_in "trip_input_dep_in_hour", with: "3"

@@ -33,6 +33,19 @@ class TripInputsController < ApplicationController
     end
   end
 
+  def edit
+    @trip_input = TripInput.find(params[:id])
+  end
+
+  def update
+    @trip_input = TripInput.find(params[:id])
+    if @trip_input.update(trip_input_params)
+      redirect_to trip_outputs_index_path
+    else
+      render "edit", trip_input: @trip_input
+    end
+  end
+
   private
 
   def trip_input_params

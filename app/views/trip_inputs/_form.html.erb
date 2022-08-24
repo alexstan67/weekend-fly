@@ -1,4 +1,4 @@
-<%= form_with model: @trip_input, url: trip_inputs_create_path, data: { turbo: false } do |f| %>
+<%= form_with model: @trip_input, data: { turbo: false } do |f| %>
   <% if trip_input.errors.any? %>
     <div class="alert-danger">
       <p><%= pluralize(trip_input.errors.count, "error") %> prohibited trip information from being processed:</p>
