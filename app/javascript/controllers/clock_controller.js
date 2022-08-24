@@ -26,7 +26,7 @@ export default class extends Controller {
     this.outputTarget.innerText = day + "-" + month + "-" + year + " | " + hour + ":" + min + " UTC";
     setInterval(() => {
       this.digitalClock()
-    }, 60000);
+    }, 30000);
   }
 
   updateTime(k) {

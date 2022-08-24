@@ -3,7 +3,7 @@
 <h1>TripOutputs#index</h1>
 <p>UTC Time:<%= Time.zone.now.to_fs(:long_ordinal) %></p>
 
-<% @result.each do |airport| %>
+<% @filtered_airports.each do |airport| %>
   <h2>Way to</h2>
   <table>
     <tr>
