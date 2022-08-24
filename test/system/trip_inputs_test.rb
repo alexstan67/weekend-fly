@@ -17,10 +17,10 @@ class TripInputsTest < ApplicationSystemTestCase
     assert_selector "nav"
   end
 
-  test "Edit button should be present" do
+  test "Account button should be present" do
     login_as users(:john)
     visit new_trip_input_url
-    assert_selector "a", text: "Edit"
+    assert_selector "a", text: "Account"
   end
 
   test "Back button" do

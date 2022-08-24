@@ -46,7 +46,7 @@
       <% if !TripInput.find_by(user_id: current_user.id).nil? %>
         <%= link_to "Last Trip", trip_outputs_index_path, class:"btn btn-success" %>
       <% end %>
-      <%= link_to "Edit", edit_user_registration_path, class:"btn btn-secondary" %>
+      <%= link_to "Account", edit_user_registration_path, class:"btn btn-secondary" %>
       <%= link_to "Sign Out", destroy_user_session_path, data: {turbo_method: :delete}, class:"btn btn-secondary" %>
     <% else %>  
       <%= link_to "Sign In", new_user_session_path, class:"btn btn-secondary" %>
