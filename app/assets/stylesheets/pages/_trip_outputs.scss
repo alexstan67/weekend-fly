@@ -1,0 +1,33 @@
+.to-container {
+  display: flex;
+  flex-direction: column;
+  background-color: yellow;
+  padding: 5px;
+}
+.to-container-flight-information {
+  display: flex;
+  flex-direction: row;
+  background-color: red;
+  justify-content: space-between;
+  padding: 5px;
+}
+.to-container-airport-selection {
+  display: column;
+  background-color: blue;
+}
+.to-container-flight-summary {
+  display: flex;
+  flex-direction: column;
+  background-color: lightpink;
+
+}
+.to-container-map {
+  background-color: green;
+}
+.to-container-fs-element {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 10px;
+  background-color: purple;
+}

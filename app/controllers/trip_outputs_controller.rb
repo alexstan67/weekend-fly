@@ -2,7 +2,7 @@ require_relative '../../lib/assets/ruby_haversine'
 require "normalize_country"
 
 class TripOutputsController < ApplicationController
-  def index
+  def home
     # We load logged in user last Trip_input data
     @trip_input = TripInput.where(user_id: current_user.id).order(id: :desc).first
 
@@ -12,7 +12,8 @@ class TripOutputsController < ApplicationController
 
     # SQL Distance calculation with 10% margin
     distance_nm = @trip_input.distance_nm
-    margin = 0.1 * distance_nm
+    @margin = 0.1
+    margin = @margin * distance_nm
 
     # SQL Filter on airport_type
     list_airport_type = []
