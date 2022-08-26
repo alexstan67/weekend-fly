@@ -1,46 +1,60 @@
 .to-container {
+  height: calc(100vh - 64px);
   display: flex;
   flex-direction: column;
-  background-color: yellow;
-  padding: 5px;
+  width: 100%;
+  //background-color: yellow;
+  background-image: url("anthony-duran-CUGLrvJQ3IA-unsplash.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
 }
-.to-container-flight-information {
+.to-container-flight-info {
   display: flex;
   flex-direction: row;
-  background-color: red;
+  //background-color: red;
   justify-content: space-between;
-  padding: 5px;
 }
 .to-container-airport-selection {
   display: column;
-  background-color: blue;
+  background-color: $dark;
+  border-radius: $border-radius;
+  opacity: 0.8;
 }
 .to-container-flight-summary {
   display: flex;
   flex-direction: column;
-  background-color: $color3;
-
+  background-color: $dark;
+  opacity: 0.8;
+  border-radius: $border-radius;
+  width: fit-content;
+  color: $light;
+  h1, h2 {
+    color: $light;
+  }
 }
 .to-container-map {
-  background-color: $color3;
+  width: 500px;
+  background-color: $dark;
+  opacity: 0.8;
+  border-radius: $border-radius;
 }
 .to-container-fs-element {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 10px;
-  background-color: purple;
+  //background-color: purple;
 }
-.to-container-as-flights{
+.to-container-as-flights {
   display: flex;
   flex-direction: row;
-  background-color: $color3;
+  //background-color: $color3;;
 }
-.to-container-asf-box{
-  display: flex;
-  flex-direction: column;
+.to-container-asf-element {
+  border: solid 1px;
+  color: $light;
 }
-
 .to-container-as-accommodations{
 
 }
