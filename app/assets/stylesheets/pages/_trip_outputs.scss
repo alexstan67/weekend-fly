@@ -18,11 +18,11 @@
 .to-container-flight-summary {
   display: flex;
   flex-direction: column;
-  background-color: lightpink;
+  background-color: $color3;
 
 }
 .to-container-map {
-  background-color: green;
+  background-color: $color3;
 }
 .to-container-fs-element {
   display: flex;
@@ -30,4 +30,17 @@
   justify-content: space-between;
   margin: 10px;
   background-color: purple;
+}
+.to-container-as-flights{
+  display: flex;
+  flex-direction: row;
+  background-color: $color3;
+}
+.to-container-asf-box{
+  display: flex;
+  flex-direction: column;
+}
+
+.to-container-as-accommodations{
+
 }
