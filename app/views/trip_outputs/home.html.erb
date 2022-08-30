@@ -1,84 +1,44 @@
 <% require "normalize_country" %>
+
 <div class="to-container p-5">
   <div class="to-container-flight-info m-20">
     <div class="to-container-flight-summary p-20">
-      <h2>Flight Summary</h2>
-      <div class="to-container-fs-element">
-        <ul>
-          <li>Departure: <%= "#{Airport.find_by(icao: @trip_input.dep_airport_icao).name} (#{@trip_input.dep_airport_icao})" %></li>
-          <li>Distance: <%= "#{@trip_input.distance_nm} #{current_user.distance_unit} with #{@margin * 100}% margin" %></li>
-          <li>Estimated Enroute Time: <%= "#{@trip_input.eet_hour} hour(s)" %></li>
-          <li>Flight Back: <%= @trip_input.flight_back == "AM" ? "Morning" : "Afternoon" %></li>
-        </ul>
-      </div>
-      <div class="to-container-fs-element">
-        <% if @trip_input.small_airport %>
+      <h1><em>Flight</em> Summary</h1>
+    
+      <h3>Departure airport</h2>
+      <%= "#{Airport.find_by(icao: @trip_input.dep_airport_icao).name} ( #{@trip_input.dep_airport_icao} | #{Airport.find_by(icao: @trip_input.dep_airport_icao).local_code} ) #{NormalizeCountry(Airport.find_by(icao: @trip_input.dep_airport_icao).country, :to => :emoji)}"  %>
+
+      <h3>Departure date</h2>
+      <%= "#{@departure_day}, #{format_time(@departure_date_time.hour)}:#{format_time(@departure_date_time.min)} UTC" %>
+      <h3>Distance & E.E.T.</h2>
+      <%= "#{@trip_input.distance_nm}nm (with 10% margin) | #{pluralize(@trip_input.eet_hour, "hour")}" %>
+
+      <h3>Return flight</h3>
+      <%= "#{@return_day}, #{@trip_input.flight_back}, #{pluralize(@trip_input.overnights, "overnight")}" %>
+      
+      <h3>Filters</h3>
+      <% if @trip_input.small_airport %>
           <span class="tag tag-info">small airport</span>
-        <% end %>
-        <% if @trip_input.medium_airport %>
+      <% end %>
+      <% if @trip_input.medium_airport %>
           <span class="tag tag-info">medium airport</span>
-        <% end %>
-        <% if @trip_input.large_airport %>
-          <span class="tag tag-info">large airport</span>
-        <% end %>
-        <% if @trip_input.international_flight %>
-          <span class="tag tag-info">international</span>
-        <% else %>
-          <span class="tag tag-info">national</span>
-        <% end %>
-      </div>
-      <div class="forms-submit m-10">
+      <% end %>
+      <% if @trip_input.large_airport %>
+        <span class="tag tag-info">large airport</span>
+      <% end %>
+      <% if @trip_input.international_flight %>
+        <span class="tag tag-info">international</span>
+      <% else %>
+        <span class="tag tag-info">national</span>
+      <% end %>
+
+      <div class="mt-20">
         <%= link_to "Edit", edit_trip_input_path(@trip_input), class:"btn btn-secondary" %>
       </div>
+
     </div>
     <div class="to-container-map">
-      map
+      coming map
     </div>
-  </div>
-
-  <div class="to-container-airport-selection m-20 p-5">
-  <% @filtered_airports.each do |airport| %>
-    <div class="to-container-as-flights m-10">
-      <div class="to-container-asf-element d-flex flex-column p-5">
-        <div>
-          <%= "#{Airport.find_by(icao: @trip_input.dep_airport_icao).name} (#{@trip_input.dep_airport_icao})" %>
-        </div>
-        <div class="d-flex flex-row justify-content-evenly">
-          <%= "#{NormalizeCountry(Airport.find_by(icao: @trip_input.dep_airport_icao).country, :to => :emoji)}" %>
-          <div class="tag tag-info"><%= airport.airport_type %></div>
-        </div>
-        <div><%= "#{(Time.zone.now + @trip_input.dep_in_hour.hours).to_fs(:long_ordinal)}" %></div>
-      </div>
-      <div class="to-container-asf-element d-flex flex-column p-5">
-        <div class="d-flex flex-row justify-content-evenly text-color-primary"> >>> </div>
-        <div class="d-flex flex-row justify-content-evenly"> <%= "#{airport.distance.round(1)} #{current_user.distance_unit}" %></div>
-      
-      </div>
-      <div class="to-container-asf-element d-flex flex-column p-5">
-        <div><%= "#{Airport.find_by(icao: airport.icao).name} (#{airport.icao})" %></div>
-        <div class="d-flex flex-row justify-content-evenly">
-          <div><%= "#{NormalizeCountry(Airport.find_by(icao: airport.icao).country, :to => :emoji)}" %></div>
-          <div class="tag tag-info"><%= airport.airport_type %></div>
-        </div>
-        <div><%= "#{(Time.zone.now + @trip_input.dep_in_hour.hours + @trip_input.eet_hour.hours).to_fs(:long_ordinal)}" %></div>
-      </div>
-      <div class="to-container-asf-element d-flex flex-column p-5">
-        <div class="d-flex flex-row justify-content-evenly text-color-primary"> >>> </div>
-        <div class="d-flex flex-row justify-content-evenly"> <%= "#{airport.distance.round(1)} #{current_user.distance_unit}" %></div>
-      </div>
-      <div class="to-container-asf-element d-flex flex-column p-5">
-        <div>
-          <%= "#{Airport.find_by(icao: @trip_input.dep_airport_icao).name} (#{@trip_input.dep_airport_icao})" %>
-        </div>
-        <div class="d-flex flex-row justify-content-evenly">
-          <%= "#{NormalizeCountry(Airport.find_by(icao: @trip_input.dep_airport_icao).country, :to => :emoji)}" %>
-          <div class="tag tag-info"><%= airport.airport_type %></div>
-        </div>
-      </div>
-      </div>
-      <div class="to-container-as-accommodations">
-      </div>
-
-  <% end %>
   </div>
 </div>
