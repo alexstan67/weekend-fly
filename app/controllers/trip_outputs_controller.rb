@@ -1,4 +1,5 @@
-require_relative '../../lib/assets/ruby_haversine'
+require "rest-client"
+require "json"
 require "normalize_country"
 
 class TripOutputsController < ApplicationController
@@ -49,7 +50,8 @@ class TripOutputsController < ApplicationController
           AND \
             airports.country IN ( ? ) \          
           ORDER BY \
-             airports.country, airports.airport_type;"
+             airports.country, airports.airport_type \
+          LIMIT 1;"
 
     @filtered_airports = Airport.find_by_sql [sql, @airport.latitude, @airport.latitude, @airport.longitude, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm + margin, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm - margin, list_airport_type, list_country]
     
@@ -85,5 +87,16 @@ class TripOutputsController < ApplicationController
     else
       @return_day = return_date_time.strftime("%A, %d %b") 
     end
+
+  # --------------------------------------------------------------------
+  # Openweather API
+  # --------------------------------------------------------------------
+  # Departure Airport weather
+  api_call = RestClient.get 'https://api.openweathermap.org/data/3.0/onecall', {params: {lat:40, lon:6, appid:ENV["OPENWEATHERMAP_API"], exclude: "current, minutely", units: "metric"}}
+  dep_weather = JSON.parse(api_call)
+
+  
+  @icon = dep_weather["hourly"][0]["weather"][0]["icon"]
+
   end
 end
