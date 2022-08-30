@@ -25,7 +25,7 @@ class TripInputsControllerTest < ActionDispatch::IntegrationTest
       post trip_inputs_path, params: { trip_input: { user_id: @user.id, dep_airport_icao: "ELLX", dep_in_hour: 2, eet_hour: 2, distance_nm: 100, overnights: 2, flight_back: "AM", small_airport: true, medium_airport: true, large_airport: true, international_flight: false}}
     end
 
-    assert_redirected_to trip_outputs_index_url
+    assert_redirected_to trip_outputs_home_url
   end
   
   test "should not create a new trip_input" do

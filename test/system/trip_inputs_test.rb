@@ -42,7 +42,7 @@ class TripInputsTest < ApplicationSystemTestCase
     #fill_in "International flight", with: false
     click_on "Next"
     
-    visit trip_outputs_index_url
+    visit trip_outputs_home_url
     #TODO: assert_selector "h1", text: "LFAW"
 
   end

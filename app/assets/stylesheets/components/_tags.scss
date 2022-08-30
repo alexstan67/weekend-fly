@@ -61,3 +61,51 @@
   border: 1px solid $dark;
   transition: 0.25s;
 }
+.tag-outline-primary {
+  color: $primary;
+  text-decoration: none;
+  border: 1px solid $primary;
+  transition: 0.25s;
+}
+.tag-outline-secondary {
+  color: $secondary;
+  text-decoration: none;
+  border: 1px solid $secondary;
+  transition: 0.25s;
+}
+.tag-outline-success {
+  color: $success;
+  text-decoration: none;
+  border: 1px solid $success;
+  transition: 0.25s;
+}
+.tag-outline-danger {
+  color: $danger;
+  text-decoration: none;
+  border: 1px solid $danger;
+  transition: 0.25s;
+}
+.tag-outline-warning {
+  color: $warning;
+  text-decoration: none;
+  border: 1px solid $warning;
+  transition: 0.25s;
+}
+.tag-outline-info {
+  color: $info;
+  text-decoration: none;
+  border: 1px solid $info;
+  transition: 0.25s;
+}
+.tag-outline-light {
+  color: $light;
+  text-decoration: none;
+  border: 1px solid $light;
+  transition: 0.25s;
+}
+.tag-outline-dark {
+  color: $dark;
+  text-decoration: none;
+  border: 1px solid $dark;
+  transition: 0.25s;
+}

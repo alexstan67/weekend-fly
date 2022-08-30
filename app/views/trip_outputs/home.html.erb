@@ -5,15 +5,15 @@
     <div class="to-container-flight-summary p-20">
       <h1><em>Flight</em> Summary</h1>
     
-      <h3>Departure airport</h2>
+      <h3>Departure Airport</h2>
       <%= "#{Airport.find_by(icao: @trip_input.dep_airport_icao).name} ( #{@trip_input.dep_airport_icao} | #{Airport.find_by(icao: @trip_input.dep_airport_icao).local_code} ) #{NormalizeCountry(Airport.find_by(icao: @trip_input.dep_airport_icao).country, :to => :emoji)}"  %>
 
-      <h3>Departure date</h2>
+      <h3>Departure Date</h2>
       <%= "#{@departure_day}, #{format_time(@departure_date_time.hour)}:#{format_time(@departure_date_time.min)} UTC" %>
       <h3>Distance & E.E.T.</h2>
       <%= "#{@trip_input.distance_nm}nm (with 10% margin) | #{pluralize(@trip_input.eet_hour, "hour")}" %>
 
-      <h3>Return flight</h3>
+      <h3>Return Flight</h3>
       <%= "#{@return_day}, #{@trip_input.flight_back}, #{pluralize(@trip_input.overnights, "overnight")}" %>
       
       <h3>Filters</h3>
@@ -40,5 +40,19 @@
     <div class="to-container-map">
       coming map
     </div>
+  </div>
+  <div class="to-container-airport-selection m-20 p-20">
+    <% @filtered_airports.each do |airport| %>
+      <div class="to-as-flight p-10 mb-10">
+        <div class="to-as-flight-element">
+          <div><%= image_tag("eye.svg") %></div>
+        </div>
+        <div class="to-as-flight-element to-outline">
+          <div class="distance"><%= "Distance #{airport.distance.round(1)} #{current_user.distance_unit}" %></div>
+          <div class="tag tag-outline-light m-5"><%= airport.airport_type %></div>
+          <div><%= "#{NormalizeCountry(Airport.find_by(icao: airport.icao).country, :to => :emoji)} #{airport.name} ( #{airport.icao } | #{Airport.find_by(icao: airport.icao).local_code} )"%></div>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>
