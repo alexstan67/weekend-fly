@@ -2,7 +2,7 @@ require_relative '../../lib/assets/ruby_haversine'
 require "normalize_country"
 
 class TripOutputsController < ApplicationController
-  def index
+  def home
     # We load logged in user last Trip_input data
     @trip_input = TripInput.where(user_id: current_user.id).order(id: :desc).first
 
@@ -12,7 +12,8 @@ class TripOutputsController < ApplicationController
 
     # SQL Distance calculation with 10% margin
     distance_nm = @trip_input.distance_nm
-    margin = 0.1 * distance_nm
+    @margin = 0.1
+    margin = @margin * distance_nm
 
     # SQL Filter on airport_type
     list_airport_type = []
@@ -51,6 +52,38 @@ class TripOutputsController < ApplicationController
              airports.country, airports.airport_type;"
 
     @filtered_airports = Airport.find_by_sql [sql, @airport.latitude, @airport.latitude, @airport.longitude, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm + margin, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm - margin, list_airport_type, list_country]
-     
+    
+    # Departure Date
+    current_date_time = Time.zone.now
+    departure_date_time = Time.zone.now + @trip_input.dep_in_hour.hour
+    if current_date_time.day() == departure_date_time.day()
+      @departure_day = "Today"
+    elsif
+      ((departure_date_time - current_date_time) / (3600*24)).round(0) == 1
+      @departure_day = "Tomorrow"
+    elsif
+      ((departure_date_time - current_date_time) / (3600*24)).round(0) == 2
+      @departure_day = "After-tomorrow"
+    else
+      @departure_day = departure_date_time.strftime("%A, %d %b") 
+    end
+    
+    # Departure hour
+    @departure_date_time = departure_date_time
+
+    # Return Date
+    current_date_time = Time.zone.now
+    return_date_time = Time.zone.now + @trip_input.dep_in_hour.hour + @trip_input.overnights.day
+    if current_date_time.day() == return_date_time.day()
+      @return_day = "Today"
+    elsif
+      ((return_date_time - current_date_time) / (3600*24)).round(0) == 1
+      @return_day = "Tomorrow"
+    elsif
+      ((return_date_time - current_date_time) / (3600*24)).round(0)  == 2
+      @return_day = "After-tomorrow"
+    else
+      @return_day = return_date_time.strftime("%A, %d %b") 
+    end
   end
 end

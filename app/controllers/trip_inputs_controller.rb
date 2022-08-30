@@ -27,7 +27,7 @@ class TripInputsController < ApplicationController
 
     # Save
     if @trip_input.save
-      redirect_to trip_outputs_index_path
+      redirect_to trip_outputs_home_path
     else
       render "new", trip_input: @trip_input
     end
@@ -40,7 +40,7 @@ class TripInputsController < ApplicationController
   def update
     @trip_input = TripInput.find(params[:id])
     if @trip_input.update(trip_input_params)
-      redirect_to trip_outputs_index_path
+      redirect_to trip_outputs_home_path
     else
       render "edit", trip_input: @trip_input
     end

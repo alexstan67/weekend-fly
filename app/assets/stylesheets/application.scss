@@ -3,10 +3,11 @@
 @import "config/fonts";
 @import "config/others";
 
-// Our CSS partials
+// Our CSS Components
 @import "components/index";
+
+// Our CSS partials
 @import "pages/index";
-@import "trip_inputs/index";
 
 // Common CSS
 body {

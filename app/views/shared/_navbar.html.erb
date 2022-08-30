@@ -9,7 +9,7 @@
       <div data-controller="clock">
         <% if user_signed_in? %>
           <div style="font-size: 12px">
-          </span><span data-clock-target="output" class="text-color-info ml-10"></span>
+          <span data-clock-target="output" class="text-color-info ml-10"></span>
           </div>
         <% end %>  
       </div>
@@ -44,7 +44,7 @@
   <div class="navbar-right">
     <% if user_signed_in? %>
       <% if !TripInput.find_by(user_id: current_user.id).nil? %>
-        <%= link_to "Last Trip", trip_outputs_index_path, class:"btn btn-success" %>
+        <%= link_to "Last Trip", trip_outputs_home_path, class:"btn btn-success" %>
       <% end %>
       <%= link_to "Account", edit_user_registration_path, class:"btn btn-secondary" %>
       <%= link_to "Sign Out", destroy_user_session_path, data: {turbo_method: :delete}, class:"btn btn-secondary" %>
