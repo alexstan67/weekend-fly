@@ -13,8 +13,7 @@ For General Aviation fellows, find a destination !
 
 ## Installation
 Create a .env file with following keys:
-`MAPBOX_API_KEY=`
-`CLOUDINARY_URL=`
+`OPENWEATHERMAP_API=`
 `MAIL_USERNAME=`
 `MAIL_PASSWORD=`
 `MAIL_DOMAIN=`
