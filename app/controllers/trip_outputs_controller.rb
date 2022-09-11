@@ -97,12 +97,10 @@ class TripOutputsController < ApplicationController
 
   
   date_time  = dep_weather["hourly"][@trip_input.dep_in_hour]["dt"]
-  @icon0 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 0]["weather"][0]["icon"],  @time = Time.at(date_time).utc.to_datetime.hour + 0 ]
-  @icon1 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 1]["weather"][0]["icon"],  @time = Time.at(date_time).utc.to_datetime.hour + 1 ]
-  @icon2 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 2]["weather"][0]["icon"],  @time = Time.at(date_time).utc.to_datetime.hour + 2 ]
-  @icon3 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 3]["weather"][0]["icon"],  @time = Time.at(date_time).utc.to_datetime.hour + 3 ]
-  #@time = Time.at(date_time).utc.to_datetime.hour
-  #@icon1 = dep_weather["hourly"][@trip_input.dep_in_hour + 1]["weather"][0]["icon"]
+  @icon0 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 0]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 0, dep_weather["hourly"][@trip_input.dep_in_hour + 0]["weather"][0]["description"] ] 
+  @icon1 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 1]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 1, dep_weather["hourly"][@trip_input.dep_in_hour + 1]["weather"][0]["description"] ]
+  @icon2 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 2]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 2, dep_weather["hourly"][@trip_input.dep_in_hour + 2]["weather"][0]["description"] ]
+  @icon3 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 3]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 3, dep_weather["hourly"][@trip_input.dep_in_hour + 3]["weather"][0]["description"] ]
   
   end
 end
