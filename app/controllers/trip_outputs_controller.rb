@@ -51,7 +51,7 @@ class TripOutputsController < ApplicationController
             airports.country IN ( ? ) \          
           ORDER BY \
              airports.country, airports.airport_type \
-          LIMIT 1;"
+          LIMIT 3;"
 
     @filtered_airports = Airport.find_by_sql [sql, @airport.latitude, @airport.latitude, @airport.longitude, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm + margin, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm - margin, list_airport_type, list_country]
     
@@ -95,12 +95,33 @@ class TripOutputsController < ApplicationController
   api_call = RestClient.get 'https://api.openweathermap.org/data/3.0/onecall', {params: {lat:Airport.find_by(icao: @trip_input.dep_airport_icao).latitude, lon:Airport.find_by(icao: @trip_input.dep_airport_icao).longitude, appid:ENV["OPENWEATHERMAP_API"], exclude: "current, minutely", units: "metric"}}
   dep_weather = JSON.parse(api_call)
 
-  
+  # First weather info hour, index 0
   date_time  = dep_weather["hourly"][@trip_input.dep_in_hour]["dt"]
-  @icon0 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 0]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 0, dep_weather["hourly"][@trip_input.dep_in_hour + 0]["weather"][0]["description"] ] 
-  @icon1 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 1]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 1, dep_weather["hourly"][@trip_input.dep_in_hour + 1]["weather"][0]["description"] ]
-  @icon2 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 2]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 2, dep_weather["hourly"][@trip_input.dep_in_hour + 2]["weather"][0]["description"] ]
-  @icon3 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 3]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 3, dep_weather["hourly"][@trip_input.dep_in_hour + 3]["weather"][0]["description"] ]
+
+  # Departure weather from origin airport (will be hourly in openweathermap)
+  @dep_icon0 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 0]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 0, dep_weather["hourly"][@trip_input.dep_in_hour + 0]["weather"][0]["description"] ] 
+  @dep_icon1 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 1]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 1, dep_weather["hourly"][@trip_input.dep_in_hour + 1]["weather"][0]["description"] ]
+  @dep_icon2 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 2]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 2, dep_weather["hourly"][@trip_input.dep_in_hour + 2]["weather"][0]["description"] ]
+  @dep_icon3 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 3]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 3, dep_weather["hourly"][@trip_input.dep_in_hour + 3]["weather"][0]["description"] ]
+  
+  # Arrival weather from origin airport
+  # Openweathermaps provides:
+  #   - hourly: 48  hours  (max 1 overnight)
+  #   - daily:  8   days   (more than 1 overnight)
+  if @trip_input.overnights < 2
+    @weather_mode = "hourly"
+    if @trip_input.overnights == 0
+      if @departure_date_time.hour <= 12
+        # Departure today in the morning, so we display the weather in the afternoon
+        shift = 12- @departure_date_time.hour
+      else
+        # Departure today in the afternon, so we still display weather in the atfernoon
+        shift = @departure_date_time.hour - 12
+      end
+    @arr_icon0 = [ dep_weather["hourly"][@trip_input.dep_in_hour + shift + 0]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + shift + 0, dep_weather["hourly"][@trip_input.dep_in_hour + shift + 0]["weather"][0]["description"] ] 
+    end
+  
+  end
   
   end
 end
