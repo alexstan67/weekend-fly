@@ -32,6 +32,29 @@
         <span class="tag tag-info">national</span>
       <% end %>
 
+      <h3>Departure Weather UTC</h3>
+      <table>
+        <tr>
+          <th></th>
+          <th><%= @dep_icon0[ 1 ] %>h</th>
+          <th><%= @dep_icon1[ 1 ] %>h</th>
+          <th><%= @dep_icon2[ 1 ] %>h</th>
+          <th><%= @dep_icon3[ 1 ] %>h</th>
+          <th></th>
+          <th><%= @arr_icon0[ 1 ] %>h</th>
+        </tr>
+        <tr>
+          <td>&#8594</td>
+          <td><img src="http://openweathermap.org/img/wn/<%= @dep_icon0[ 0 ] %>.png" alt="weather logo" title="<%= @dep_icon0[ 2 ] %>"></td>
+          <td><img src="http://openweathermap.org/img/wn/<%= @dep_icon1[ 0 ] %>.png" alt="weather logo" title="<%= @dep_icon1[ 2 ] %>"></td>
+          <td><img src="http://openweathermap.org/img/wn/<%= @dep_icon2[ 0 ] %>.png" alt="weather logo" title="<%= @dep_icon2[ 2 ] %>"></td>
+          <td><img src="http://openweathermap.org/img/wn/<%= @dep_icon3[ 0 ] %>.png" alt="weather logo" title="<%= @dep_icon3[ 2 ] %>"></td>
+          <td>&#8592</td>
+          <td><img src="http://openweathermap.org/img/wn/<%= @arr_icon0[ 0 ] %>.png" alt="weather logo" title="<%= @arr_icon0[ 2 ] %>"></td>
+
+        </tr>
+      </table>
+
       <div class="mt-20">
         <%= link_to "Edit", edit_trip_input_path(@trip_input), class:"btn btn-secondary" %>
       </div>

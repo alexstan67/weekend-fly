@@ -47,6 +47,8 @@ gem "devise", github: "heartcombo/devise", branch: "main"
 gem "dotenv-rails"
 gem "geocoder"
 gem "normalize_country"
+gem "rest-client"
+gem "json"
 
 # Use Sass to process CSS
 gem "sassc-rails"
