@@ -8,8 +8,6 @@
       <h3>Departure Airport</h2>
       <%= "#{Airport.find_by(icao: @trip_input.dep_airport_icao).name} ( #{@trip_input.dep_airport_icao} | #{Airport.find_by(icao: @trip_input.dep_airport_icao).local_code} ) #{NormalizeCountry(Airport.find_by(icao: @trip_input.dep_airport_icao).country, :to => :emoji)}"  %>
 
-      <h3>Departure Date</h2>
-      <%= "#{@departure_day}, #{format_time(@departure_date_time.hour)}:#{format_time(@departure_date_time.min)} UTC" %>
       <h3>Distance & E.E.T.</h2>
       <%= "#{@trip_input.distance_nm}nm (with 10% margin) | #{pluralize(@trip_input.eet_hour, "hour")}" %>
 

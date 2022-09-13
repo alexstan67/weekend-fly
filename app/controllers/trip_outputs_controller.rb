@@ -57,25 +57,21 @@ class TripOutputsController < ApplicationController
     
     # Departure Date
     current_date_time = Time.zone.now
-    departure_date_time = Time.zone.now + @trip_input.dep_in_hour.hour
-    if current_date_time.day() == departure_date_time.day()
+    if current_date_time.day() == current_date_time.day()
       @departure_day = "Today"
     elsif
-      ((departure_date_time - current_date_time) / (3600*24)).round(0) == 1
+      ((current_date_time - current_date_time) / (3600*24)).round(0) == 1
       @departure_day = "Tomorrow"
     elsif
-      ((departure_date_time - current_date_time) / (3600*24)).round(0) == 2
+      ((current_date_time - current_date_time) / (3600*24)).round(0) == 2
       @departure_day = "After-tomorrow"
     else
-      @departure_day = departure_date_time.strftime("%A, %d %b") 
+      @departure_day = current_date_time.strftime("%A, %d %b") 
     end
     
-    # Departure hour
-    @departure_date_time = departure_date_time
-
     # Return Date
     current_date_time = Time.zone.now
-    return_date_time = Time.zone.now + @trip_input.dep_in_hour.hour + @trip_input.overnights.day
+    return_date_time = Time.zone.now + @trip_input.overnights.day
     if current_date_time.day() == return_date_time.day()
       @return_day = "Today"
     elsif
@@ -96,13 +92,13 @@ class TripOutputsController < ApplicationController
   dep_weather = JSON.parse(api_call)
 
   # First weather info hour, index 0
-  date_time  = dep_weather["hourly"][@trip_input.dep_in_hour]["dt"]
+  date_time  = dep_weather["hourly"][0]["dt"]
 
   # Departure weather from origin airport (will be hourly in openweathermap)
-  @dep_icon0 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 0]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 0, dep_weather["hourly"][@trip_input.dep_in_hour + 0]["weather"][0]["description"] ] 
-  @dep_icon1 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 1]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 1, dep_weather["hourly"][@trip_input.dep_in_hour + 1]["weather"][0]["description"] ]
-  @dep_icon2 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 2]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 2, dep_weather["hourly"][@trip_input.dep_in_hour + 2]["weather"][0]["description"] ]
-  @dep_icon3 = [ dep_weather["hourly"][@trip_input.dep_in_hour + 3]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 3, dep_weather["hourly"][@trip_input.dep_in_hour + 3]["weather"][0]["description"] ]
+  @dep_icon0 = [ dep_weather["hourly"][0]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 0, dep_weather["hourly"][0]["weather"][0]["description"] ] 
+  @dep_icon1 = [ dep_weather["hourly"][1]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 1, dep_weather["hourly"][1]["weather"][0]["description"] ]
+  @dep_icon2 = [ dep_weather["hourly"][2]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 2, dep_weather["hourly"][2]["weather"][0]["description"] ]
+  @dep_icon3 = [ dep_weather["hourly"][3]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 3, dep_weather["hourly"][3]["weather"][0]["description"] ]
   
   # Arrival weather from origin airport
   # Openweathermaps provides:
@@ -111,14 +107,14 @@ class TripOutputsController < ApplicationController
   if @trip_input.overnights < 2
     @weather_mode = "hourly"
     if @trip_input.overnights == 0
-      if @departure_date_time.hour <= 12
+      if current_date_time.hour <= 12
         # Departure today in the morning, so we display the weather in the afternoon
-        shift = 12- @departure_date_time.hour
+        shift = 12- current_date_time.hour
       else
         # Departure today in the afternon, so we still display weather in the atfernoon
-        shift = @departure_date_time.hour - 12
+        shift = current_date_time.hour - 12
       end
-    @arr_icon0 = [ dep_weather["hourly"][@trip_input.dep_in_hour + shift + 0]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + shift + 0, dep_weather["hourly"][@trip_input.dep_in_hour + shift + 0]["weather"][0]["description"] ] 
+    @arr_icon0 = [ dep_weather["hourly"][shift + 0]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + shift + 0, dep_weather["hourly"][shift + 0]["weather"][0]["description"] ] 
     end
   
   end
