@@ -9,12 +9,11 @@ export default class extends Controller {
   }
 
   digitalClock() {
-    var date = new Date;
+    var date = new Date();
     
-    var day = date.getUTCDay();
+    var day = date.getUTCDate();
     var month = date.getUTCMonth() + 1
     var year = date.getUTCFullYear();
-
     var hour = date.getUTCHours();
     var min = date.getUTCMinutes();
     
