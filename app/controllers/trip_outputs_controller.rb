@@ -55,69 +55,62 @@ class TripOutputsController < ApplicationController
 
     @filtered_airports = Airport.find_by_sql [sql, @airport.latitude, @airport.latitude, @airport.longitude, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm + margin, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm - margin, list_airport_type, list_country]
     
-    # Departure Date
-    current_date_time = Time.zone.now
-    if current_date_time.day() == current_date_time.day()
-      @departure_day = "Today"
-    elsif
-      ((current_date_time - current_date_time) / (3600*24)).round(0) == 1
-      @departure_day = "Tomorrow"
-    elsif
-      ((current_date_time - current_date_time) / (3600*24)).round(0) == 2
-      @departure_day = "After-tomorrow"
+    # Return Date
+    if @trip_input.overnights == 0
+      @return_day = "Today"
+    elsif @trip_input.overnights == 1
+      @return_day = "Tomorrow"
     else
-      @departure_day = current_date_time.strftime("%A, %d %b") 
+      @return_day = "In #{@trip_input.overnights} days"
+    end
+
+    # --------------------------------------------------------------------
+    # Openweather API
+    # --------------------------------------------------------------------
+    # Departure Airport weather
+    api_call = RestClient.get 'https://api.openweathermap.org/data/3.0/onecall', {params: {lat:Airport.find_by(icao: @trip_input.dep_airport_icao).latitude, lon:Airport.find_by(icao: @trip_input.dep_airport_icao).longitude, appid:ENV["OPENWEATHERMAP_API"], exclude: "current, minutely", units: "metric"}}
+    dep_weather = JSON.parse(api_call)
+
+    # First available weather info hour, index 0
+    fly_out_dep_time  = dep_weather["hourly"][0]["dt"]
+    first_available_hour = Time.at(fly_out_dep_time).utc.to_datetime.hour
+
+    # Fly-out sunrise and sunset info
+    fly_out_sunrise_time = dep_weather["daily"][0]["sunrise"]
+    fly_out_sunrise_hour = Time.at(fly_out_sunrise_time).utc.to_datetime.hour
+    fly_out_sunset_time = dep_weather["daily"][0]["sunset"]
+    fly_out_sunset_hour = Time.at(fly_out_sunset_time).utc.to_datetime.hour
+
+    # Fly out weather departure weather between sunrise and sunset hours
+    # TODO: Code the 3 other cases!
+    i = 0
+    @fly_out_dep_icon  = []
+    @fly_out_dep_hour  = []
+    @fly_out_dep_descr = []
+    @fly_out_dep_hour  = []
+    
+    # case 1: sunrise < current_time < sunset
+    if first_available_hour >= fly_out_sunrise_hour and first_available_hour < fly_out_sunset_hour
+      for h in first_available_hour..fly_out_sunset_hour
+        @fly_out_dep_icon[i]  = dep_weather["hourly"][i]["weather"][0]["icon"]
+        @fly_out_dep_hour[i]  = h
+        @fly_out_dep_descr[i] = dep_weather["hourly"][i]["weather"][0]["description"]
+
+        i += 1
+      end
     end
     
-    # Return Date
-    current_date_time = Time.zone.now
-    return_date_time = Time.zone.now + @trip_input.overnights.day
-    if current_date_time.day() == return_date_time.day()
-      @return_day = "Today"
-    elsif
-      ((return_date_time - current_date_time) / (3600*24)).round(0) == 1
-      @return_day = "Tomorrow"
-    elsif
-      ((return_date_time - current_date_time) / (3600*24)).round(0)  == 2
-      @return_day = "After-tomorrow"
-    else
-      @return_day = return_date_time.strftime("%A, %d %b") 
-    end
+    
 
-  # --------------------------------------------------------------------
-  # Openweather API
-  # --------------------------------------------------------------------
-  # Departure Airport weather
-  api_call = RestClient.get 'https://api.openweathermap.org/data/3.0/onecall', {params: {lat:Airport.find_by(icao: @trip_input.dep_airport_icao).latitude, lon:Airport.find_by(icao: @trip_input.dep_airport_icao).longitude, appid:ENV["OPENWEATHERMAP_API"], exclude: "current, minutely", units: "metric"}}
-  dep_weather = JSON.parse(api_call)
-
-  # First weather info hour, index 0
-  date_time  = dep_weather["hourly"][0]["dt"]
-
-  # Departure weather from origin airport (will be hourly in openweathermap)
-  @dep_icon0 = [ dep_weather["hourly"][0]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 0, dep_weather["hourly"][0]["weather"][0]["description"] ] 
-  @dep_icon1 = [ dep_weather["hourly"][1]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 1, dep_weather["hourly"][1]["weather"][0]["description"] ]
-  @dep_icon2 = [ dep_weather["hourly"][2]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 2, dep_weather["hourly"][2]["weather"][0]["description"] ]
-  @dep_icon3 = [ dep_weather["hourly"][3]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + 3, dep_weather["hourly"][3]["weather"][0]["description"] ]
-  
-  # Arrival weather from origin airport
-  # Openweathermaps provides:
-  #   - hourly: 48  hours  (max 1 overnight)
-  #   - daily:  8   days   (more than 1 overnight)
-  if @trip_input.overnights < 2
-    @weather_mode = "hourly"
-    if @trip_input.overnights == 0
-      if current_date_time.hour <= 12
-        # Departure today in the morning, so we display the weather in the afternoon
-        shift = 12- current_date_time.hour
-      else
-        # Departure today in the afternon, so we still display weather in the atfernoon
-        shift = current_date_time.hour - 12
-      end
-    @arr_icon0 = [ dep_weather["hourly"][shift + 0]["weather"][0]["icon"],  Time.at(date_time).utc.to_datetime.hour + shift + 0, dep_weather["hourly"][shift + 0]["weather"][0]["description"] ] 
-    end
-  
+    @dep_icon0 = [ dep_weather["hourly"][0]["weather"][0]["icon"],  Time.at(fly_out_dep_time).utc.to_datetime.hour + 0, dep_weather["hourly"][0]["weather"][0]["description"] ] 
+    @dep_icon1 = [ dep_weather["hourly"][1]["weather"][0]["icon"],  Time.at(fly_out_dep_time).utc.to_datetime.hour + 1, dep_weather["hourly"][1]["weather"][0]["description"] ]
+    @dep_icon2 = [ dep_weather["hourly"][2]["weather"][0]["icon"],  Time.at(fly_out_dep_time).utc.to_datetime.hour + 2, dep_weather["hourly"][2]["weather"][0]["description"] ]
+    @dep_icon3 = [ dep_weather["hourly"][3]["weather"][0]["icon"],  Time.at(fly_out_dep_time).utc.to_datetime.hour + 3, dep_weather["hourly"][3]["weather"][0]["description"] ]
+    
+    # Arrival weather from origin airport
+    # Openweathermaps provides:
+    #   - hourly: 48  hours  (max 1 overnight)
+    #   - daily:  8   days   (more than 1 overnight)
   end
-  
-  end
+
 end

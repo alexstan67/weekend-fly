@@ -9,10 +9,14 @@
       <%= "#{Airport.find_by(icao: @trip_input.dep_airport_icao).name} ( #{@trip_input.dep_airport_icao} | #{Airport.find_by(icao: @trip_input.dep_airport_icao).local_code} ) #{NormalizeCountry(Airport.find_by(icao: @trip_input.dep_airport_icao).country, :to => :emoji)}"  %>
 
       <h3>Distance & E.E.T.</h2>
-      <%= "#{@trip_input.distance_nm}nm (with 10% margin) | #{pluralize(@trip_input.eet_hour, "hour")}" %>
+      <%= "#{@trip_input.distance_nm}nm (with 10% margin) | #{pluralize(@trip_input.eet_hour, "hour")} flight" %>
 
       <h3>Return Flight</h3>
-      <%= "#{@return_day}, #{pluralize(@trip_input.overnights, "overnight")}" %>
+      <% if @trip_input.overnights > 0 %>
+        <%= "#{@return_day} (#{pluralize(@trip_input.overnights, "overnight")})" %>
+      <% else %>
+        <%= "#{@return_day}" %>
+      <% end %>
       
       <h3>Filters</h3>
       <% if @trip_input.small_airport %>
@@ -33,23 +37,14 @@
       <h3>Departure Weather UTC</h3>
       <table>
         <tr>
-          <th></th>
-          <th><%= @dep_icon0[ 1 ] %>h</th>
-          <th><%= @dep_icon1[ 1 ] %>h</th>
-          <th><%= @dep_icon2[ 1 ] %>h</th>
-          <th><%= @dep_icon3[ 1 ] %>h</th>
-          <th></th>
-          <th><%= @arr_icon0[ 1 ] %>h</th>
+          <% @fly_out_dep_hour.each do |h| %> 
+            <th><%= h %>h</th>
+          <% end %>
         </tr>
         <tr>
-          <td>&#8594</td>
-          <td><img src="http://openweathermap.org/img/wn/<%= @dep_icon0[ 0 ] %>.png" alt="weather logo" title="<%= @dep_icon0[ 2 ] %>"></td>
-          <td><img src="http://openweathermap.org/img/wn/<%= @dep_icon1[ 0 ] %>.png" alt="weather logo" title="<%= @dep_icon1[ 2 ] %>"></td>
-          <td><img src="http://openweathermap.org/img/wn/<%= @dep_icon2[ 0 ] %>.png" alt="weather logo" title="<%= @dep_icon2[ 2 ] %>"></td>
-          <td><img src="http://openweathermap.org/img/wn/<%= @dep_icon3[ 0 ] %>.png" alt="weather logo" title="<%= @dep_icon3[ 2 ] %>"></td>
-          <td>&#8592</td>
-          <td><img src="http://openweathermap.org/img/wn/<%= @arr_icon0[ 0 ] %>.png" alt="weather logo" title="<%= @arr_icon0[ 2 ] %>"></td>
-
+          <% @fly_out_dep_hour.each_with_index do |h, index| %> 
+            <td><img src="http://openweathermap.org/img/wn/<%= @fly_out_dep_icon[ index ] %>.png" alt="weather logo" title="<%= @fly_out_dep_descr[ index ] %>"></td>
+          <% end %>
         </tr>
       </table>
 
