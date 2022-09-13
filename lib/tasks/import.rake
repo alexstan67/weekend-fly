@@ -32,6 +32,7 @@ namespace :import do
     CSV.foreach(filepath, headers: :first_row) do |row|
       airport = Airport.create(icao: row['ident'], name: row['name'], city: row['municipality'], country: row['iso_country'], iata: row['iata_code'], latitude: row['latitude_deg'], longitude: row['longitude_deg'], altitude: row['elevation_ft'], airport_type: row['type'], continent: row['continent'], url: row['home_link'], local_code: row['local_code'])
       airport.persisted? ? counter += 1 : counter_rejected += 1
+      #puts "#{airport.icao} - #{airport.name} - #{airport.errors.full_messages.join(",")}" if airport.errors.any?
     end
     puts "Imported #{counter} / #{counter + counter_rejected} airports!"
   end
