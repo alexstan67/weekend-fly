@@ -34,11 +34,9 @@ class TripInputsTest < ApplicationSystemTestCase
     visit new_trip_input_url
     #fill_in "Departure airport", with: "LFAW"
     #fill_in "Departure in (hours)", with: "3"
-    #fill_in "trip_input_dep_in_hour", with: "3"
     #fill_in 'Estimated enroute time (hours)', with: "2"
     #fill_in :distance_nm, with: "200"
     fill_in "Overnights", with: "3"
-    #fill_in :trip_input_flight_back, with: "PM"
     #fill_in "International flight", with: false
     click_on "Next"
     
