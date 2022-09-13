@@ -14,7 +14,7 @@
       <%= "#{@trip_input.distance_nm}nm (with 10% margin) | #{pluralize(@trip_input.eet_hour, "hour")}" %>
 
       <h3>Return Flight</h3>
-      <%= "#{@return_day}, #{@trip_input.flight_back}, #{pluralize(@trip_input.overnights, "overnight")}" %>
+      <%= "#{@return_day}, #{pluralize(@trip_input.overnights, "overnight")}" %>
       
       <h3>Filters</h3>
       <% if @trip_input.small_airport %>

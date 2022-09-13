@@ -12,7 +12,6 @@ class TripInputsController < ApplicationController
   def create
     @trip_input = TripInput.new(trip_input_params)
     @trip_input.user_id = current_user.id
-    @trip_input.dep_in_hour = @trip_input.dep_in_hour.to_i
     @trip_input.distance_nm = @trip_input.distance_nm.to_i
     @trip_input.eet_hour = @trip_input.eet_hour.to_i
 
@@ -49,6 +48,6 @@ class TripInputsController < ApplicationController
   private
 
   def trip_input_params
-    params.require(:trip_input).permit(:user_id, :dep_airport_icao, :dep_in_hour, :overnights, :flight_back, :distance_nm, :eet_hour, :small_airport, :medium_airport, :large_airport, :international_flight)
+    params.require(:trip_input).permit(:user_id, :dep_airport_icao, :overnights, :distance_nm, :eet_hour, :small_airport, :medium_airport, :large_airport, :international_flight)
   end
 end
