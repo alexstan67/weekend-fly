@@ -11,7 +11,10 @@
       <h3>Distance & E.E.T.</h2>
       <%= "#{@trip_input.distance_nm}nm (with 10% margin) | #{pluralize(@trip_input.eet_hour, "hour")} flight" %>
 
-      <h3>Return Flight</h3>
+      <h3>Departure Day</h3>
+      <%= @departure_day %>
+
+      <h3>Return Day</h3>
       <% if @trip_input.overnights > 0 %>
         <%= "#{@return_day} (#{pluralize(@trip_input.overnights, "overnight")})" %>
       <% else %>
