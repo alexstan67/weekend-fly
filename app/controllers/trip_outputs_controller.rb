@@ -55,63 +55,110 @@ class TripOutputsController < ApplicationController
 
     @filtered_airports = Airport.find_by_sql [sql, @airport.latitude, @airport.latitude, @airport.longitude, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm + margin, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm - margin, list_airport_type, list_country]
     
-
     # --------------------------------------------------------------------
-    # Openweather API
+    # --- Openweather API
     # --------------------------------------------------------------------
-    # Departure Airport weather
+    # Definitions:
+    # ------------
+    #   Fly Out = The day we fly from original airport to destination airport
+    #   Fly In  = The day we fly from destination airport to original airport
+    #
+    # ---------------------------------
+    # --- Fly out departure airport weather
+    # ---------------------------------
     api_call = RestClient.get 'https://api.openweathermap.org/data/3.0/onecall', {params: {lat:Airport.find_by(icao: @trip_input.dep_airport_icao).latitude, lon:Airport.find_by(icao: @trip_input.dep_airport_icao).longitude, appid:ENV["OPENWEATHERMAP_API"], exclude: "current, minutely", units: "metric"}}
-    dep_weather = JSON.parse(api_call)
+    fly_out_dep_weather = JSON.parse(api_call)
 
     # First available weather info hour, index 0
-    fly_out_dep_time  = dep_weather["hourly"][0]["dt"]
+    fly_out_dep_time  = fly_out_dep_weather["hourly"][0]["dt"]
     first_available_hour = Time.at(fly_out_dep_time).utc.to_datetime.hour
-    #first_available_hour = 3
 
     # Fly-out sunrise and sunset info
-    fly_out_sunrise_time = dep_weather["daily"][0]["sunrise"]
+    fly_out_sunrise_time = fly_out_dep_weather["daily"][0]["sunrise"]
     fly_out_sunrise_hour = Time.at(fly_out_sunrise_time).utc.to_datetime.hour
-    fly_out_sunset_time = dep_weather["daily"][0]["sunset"]
+    fly_out_sunset_time = fly_out_dep_weather["daily"][0]["sunset"]
     fly_out_sunset_hour = Time.at(fly_out_sunset_time).utc.to_datetime.hour
     
-    # Fly out weather departure weather between sunrise and sunset hours
+    # Variable init
     @fly_out_dep_icon  = []
     @fly_out_dep_hour  = []
     @fly_out_dep_descr = []
+    fly_out_offset1 = 0
+    fly_out_offset2 = 0
     
     # case 1: sunrise < current_time < sunset
     #   Departure: today
     if first_available_hour >= fly_out_sunrise_hour and first_available_hour <= (fly_out_sunset_hour - @trip_input.eet_hour)
-      offset = 0
-      for i in offset..(offset + fly_out_sunset_hour - @trip_input.eet_hour - first_available_hour)
-        @fly_out_dep_icon[i]  = dep_weather["hourly"][i]["weather"][0]["icon"]
-        @fly_out_dep_hour[i]  = Time.at(dep_weather["hourly"][i]["dt"]).utc.to_datetime.hour
-        @fly_out_dep_descr[i] = dep_weather["hourly"][i]["weather"][0]["description"]
+      fly_out_offset1 = 0
+      fly_out_offset2 = fly_out_offset1 + fly_out_sunset_hour - @trip_input.eet_hour - first_available_hour
+      for i in fly_out_offset1..fly_out_offset2
+        @fly_out_dep_icon[i]  = fly_out_dep_weather["hourly"][i]["weather"][0]["icon"]
+        @fly_out_dep_hour[i]  = Time.at(fly_out_dep_weather["hourly"][i]["dt"]).utc.to_datetime.hour
+        @fly_out_dep_descr[i] = fly_out_dep_weather["hourly"][i]["weather"][0]["description"]
       end
     end
     
     # case 2: current_time > sunset
     #   Departure: tomorrow
     if first_available_hour > (fly_out_sunset_hour - @trip_input.eet_hour)
-      offset = 24 - first_available_hour + fly_out_sunrise_hour
-      for i in offset..(offset + fly_out_sunset_hour - @trip_input.eet_hour - fly_out_sunrise_hour)
-        @fly_out_dep_icon[i]  = dep_weather["hourly"][i]["weather"][0]["icon"]
-        @fly_out_dep_hour[i]  = Time.at(dep_weather["hourly"][i]["dt"]).utc.to_datetime.hour
-        @fly_out_dep_descr[i] = dep_weather["hourly"][i]["weather"][0]["description"]
+      fly_out_offset1 = 24 - first_available_hour + fly_out_sunrise_hour
+      fly_out_offset2 = fly_out_offset1 + fly_out_sunset_hour - @trip_input.eet_hour - fly_out_sunrise_hour
+      k = 0
+      for i in fly_out_offset1..fly_out_offset2
+        @fly_out_dep_icon[k]  = fly_out_dep_weather["hourly"][i]["weather"][0]["icon"]
+        @fly_out_dep_hour[k]  = Time.at(fly_out_dep_weather["hourly"][i]["dt"]).utc.to_datetime.hour
+        @fly_out_dep_descr[k] = fly_out_dep_weather["hourly"][i]["weather"][0]["description"]
+        k += 1
       end
     end
     
     # case 3: current_time < sunrise
     #   Departure: today
     if first_available_hour < fly_out_sunrise_hour
-      offset = fly_out_sunrise_hour - first_available_hour
-      for i in offset..(offset + fly_out_sunset_hour - fly_out_sunrise_hour - @trip_input.eet_hour)
-        @fly_out_dep_icon[i]  = dep_weather["hourly"][i]["weather"][0]["icon"]
-        @fly_out_dep_hour[i]  = Time.at(dep_weather["hourly"][i]["dt"]).utc.to_datetime.hour
-        @fly_out_dep_descr[i] = dep_weather["hourly"][i]["weather"][0]["description"]
+      fly_out_offset1 = fly_out_sunrise_hour - first_available_hour
+      fly_out_offset2 = fly_out_offset1 + fly_out_sunset_hour - fly_out_sunrise_hour - @trip_input.eet_hour
+      k = 0
+      for i in fly_out_offset1..fly_out_offset2
+        @fly_out_dep_icon[k]  = fly_out_dep_weather["hourly"][i]["weather"][0]["icon"]
+        @fly_out_dep_hour[k]  = Time.at(fly_out_dep_weather["hourly"][i]["dt"]).utc.to_datetime.hour
+        @fly_out_dep_descr[k] = fly_out_dep_weather["hourly"][i]["weather"][0]["description"]
+        k += 1
       end
     end
 
+    # ---------------------------------
+    # --- Fly out arrival airport weather
+    # ---------------------------------
+    @fly_out_arr = []
+    fly_out_arr_weather = []
+    icon = []
+    hour = []
+    desc = []
+    temp = []
+    if @filtered_airports.count > 0
+      for i in 0..@filtered_airports.count - 1
+        api_call = RestClient.get 'https://api.openweathermap.org/data/3.0/onecall', {params: {lat:@filtered_airports[i].latitude, lon:@filtered_airports[i].longitude, appid:ENV["OPENWEATHERMAP_API"], exclude: "current, minutely", units: "metric"}}
+        fly_out_arr_weather = JSON.parse(api_call)
+        k = 0
+        #TODO: Second offset needs to be checked if we fly on last possible departure hour
+        for j in (fly_out_offset1 + @trip_input.eet_hour)..(fly_out_offset2 + @trip_input.eet_hour)
+          icon[k] = fly_out_arr_weather["hourly"][j]["weather"][0]["icon"]
+          hour[k] = Time.at(fly_out_arr_weather["hourly"][j]["dt"]).utc.to_datetime.hour 
+          desc[k] = fly_out_arr_weather["hourly"][j]["weather"][0]["description"]
+          temp.push(hour[k], icon[k], desc[k])
+          k =+ 1
+        end
+        # We push all weather hours and info for a defined destination airport
+        @fly_out_arr.push(temp)
+
+        # We clean the temp array
+        temp = []
+      end
+    end
+    
+    #---------------------------------
+    # Fly in arrival airport weather
+    # ---------------------------------
     # Arrival weather from origin airport
     # Openweathermaps provides:
     #   - hourly: 48  hours  (max 1 overnight)
