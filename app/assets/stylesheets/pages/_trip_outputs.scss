@@ -35,23 +35,25 @@
 .to-container-airport-selection{
   display: flex;
   flex-direction: column;
-  background-color: $color2;
+  background-color: $dark;
   border-radius: $border-radius;
   opacity: 0.8;
 }
 .to-as-flight {
   display: flex;
-  flex-direction: row;
-  border: 1px solid $light;
+  flex-direction: column;
+  border: 1px solid red;
   border-radius: $border-radius;
 }
 .to-as-flight-element{
   display: flex;
-  flex-direction: column;
-  align-content: center;
-  border-radius: $border-radius;
-  margin: 5px;
-  padding: 5px;
+  flex-direction: row;
+  border: 1px solid yellow;
+  table, th, td{
+    border-collapse: collapse;
+    border: 1px solid;
+    font-size: 12px;
+  }
 }
 .to-outline{
   border: 1px solid $light;
