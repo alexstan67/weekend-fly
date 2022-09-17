@@ -80,11 +80,10 @@ class TripOutputsController < ApplicationController
     fly_out_sunset_hour = Time.at(fly_out_sunset_time).utc.to_datetime.hour
     
     # Variable init
-    @fly_out_dep_icon  = []
-    @fly_out_dep_hour  = []
-    @fly_out_dep_descr = []
+    @fly_out_dep = []
     fly_out_offset1 = 0
     fly_out_offset2 = 0
+    buffer = []
     
     # case 1: sunrise < current_time < sunset
     #   Departure: today
@@ -92,9 +91,12 @@ class TripOutputsController < ApplicationController
       fly_out_offset1 = 0
       fly_out_offset2 = fly_out_offset1 + fly_out_sunset_hour - @trip_input.eet_hour - first_available_hour
       for i in fly_out_offset1..fly_out_offset2
-        @fly_out_dep_icon[i]  = fly_out_dep_weather["hourly"][i]["weather"][0]["icon"]
-        @fly_out_dep_hour[i]  = Time.at(fly_out_dep_weather["hourly"][i]["dt"]).utc.to_datetime.hour
-        @fly_out_dep_descr[i] = fly_out_dep_weather["hourly"][i]["weather"][0]["description"]
+        hour  = Time.at(fly_out_dep_weather["hourly"][i]["dt"]).utc.to_datetime.hour
+        icon  = fly_out_dep_weather["hourly"][i]["weather"][0]["icon"]
+        desc = fly_out_dep_weather["hourly"][i]["weather"][0]["description"]
+        buffer.push(hour, icon, desc)
+        @fly_out_dep.push(buffer)
+        buffer = []
       end
     end
     
@@ -103,12 +105,13 @@ class TripOutputsController < ApplicationController
     if first_available_hour > (fly_out_sunset_hour - @trip_input.eet_hour)
       fly_out_offset1 = 24 - first_available_hour + fly_out_sunrise_hour
       fly_out_offset2 = fly_out_offset1 + fly_out_sunset_hour - @trip_input.eet_hour - fly_out_sunrise_hour
-      k = 0
       for i in fly_out_offset1..fly_out_offset2
-        @fly_out_dep_icon[k]  = fly_out_dep_weather["hourly"][i]["weather"][0]["icon"]
-        @fly_out_dep_hour[k]  = Time.at(fly_out_dep_weather["hourly"][i]["dt"]).utc.to_datetime.hour
-        @fly_out_dep_descr[k] = fly_out_dep_weather["hourly"][i]["weather"][0]["description"]
-        k += 1
+        hour  = Time.at(fly_out_dep_weather["hourly"][i]["dt"]).utc.to_datetime.hour
+        icon  = fly_out_dep_weather["hourly"][i]["weather"][0]["icon"]
+        desc = fly_out_dep_weather["hourly"][i]["weather"][0]["description"]
+        buffer.push(hour, icon, desc)
+        @fly_out_dep.push(buffer)
+        buffer = []
       end
     end
     
@@ -117,24 +120,25 @@ class TripOutputsController < ApplicationController
     if first_available_hour < fly_out_sunrise_hour
       fly_out_offset1 = fly_out_sunrise_hour - first_available_hour
       fly_out_offset2 = fly_out_offset1 + fly_out_sunset_hour - fly_out_sunrise_hour - @trip_input.eet_hour
-      k = 0
       for i in fly_out_offset1..fly_out_offset2
-        @fly_out_dep_icon[k]  = fly_out_dep_weather["hourly"][i]["weather"][0]["icon"]
-        @fly_out_dep_hour[k]  = Time.at(fly_out_dep_weather["hourly"][i]["dt"]).utc.to_datetime.hour
-        @fly_out_dep_descr[k] = fly_out_dep_weather["hourly"][i]["weather"][0]["description"]
-        k += 1
+        hour  = Time.at(fly_out_dep_weather["hourly"][i]["dt"]).utc.to_datetime.hour
+        icon  = fly_out_dep_weather["hourly"][i]["weather"][0]["icon"]
+        desc = fly_out_dep_weather["hourly"][i]["weather"][0]["description"]
+        buffer.push(hour, icon, desc)
+        @fly_out_dep.push(buffer)
+        buffer = []
       end
     end
 
     # ---------------------------------
     # --- Fly out arrival airport weather
     # ---------------------------------
+    # Variable init
     @fly_out_arr = []
     fly_out_arr_weather = []
     icon = []
     hour = []
     desc = []
-    temp = []
     if @filtered_airports.count > 0
       for i in 0..@filtered_airports.count - 1
         api_call = RestClient.get 'https://api.openweathermap.org/data/3.0/onecall', {params: {lat:@filtered_airports[i].latitude, lon:@filtered_airports[i].longitude, appid:ENV["OPENWEATHERMAP_API"], exclude: "current, minutely", units: "metric"}}
@@ -142,17 +146,17 @@ class TripOutputsController < ApplicationController
         k = 0
         #TODO: Second offset needs to be checked if we fly on last possible departure hour
         for j in (fly_out_offset1 + @trip_input.eet_hour)..(fly_out_offset2 + @trip_input.eet_hour)
-          icon[k] = fly_out_arr_weather["hourly"][j]["weather"][0]["icon"]
           hour[k] = Time.at(fly_out_arr_weather["hourly"][j]["dt"]).utc.to_datetime.hour 
+          icon[k] = fly_out_arr_weather["hourly"][j]["weather"][0]["icon"]
           desc[k] = fly_out_arr_weather["hourly"][j]["weather"][0]["description"]
-          temp.push(hour[k], icon[k], desc[k])
+          buffer.push(hour[k], icon[k], desc[k])
           k =+ 1
         end
         # We push all weather hours and info for a defined destination airport
-        @fly_out_arr.push(temp)
+        @fly_out_arr.push(buffer)
 
-        # We clean the temp array
-        temp = []
+        # We clean the buffer array
+        buffer = []
       end
     end
     
