@@ -40,13 +40,13 @@
       <h3>Departure Weather UTC</h3>
       <table>
         <tr>
-          <% @fly_out_dep_hour.each do |h| %> 
-            <th><%= h %>h</th>
+          <% @fly_out_dep.each do |h| %> 
+            <th><%= h[0] %>h</th>
           <% end %>
         </tr>
         <tr>
-          <% @fly_out_dep_hour.each_with_index do |h, index| %> 
-            <td><img src="http://openweathermap.org/img/wn/<%= @fly_out_dep_icon[ index ] %>.png" alt="weather logo" title="<%= @fly_out_dep_descr[ index ] %>"></td>
+          <% @fly_out_dep.each do |fly_out_dep| %> 
+            <td><img src="http://openweathermap.org/img/wn/<%= fly_out_dep[1] %>.png" alt="weather logo" title="<%= fly_out_dep[2] %>"></td>
           <% end %>
         </tr>
       </table>
