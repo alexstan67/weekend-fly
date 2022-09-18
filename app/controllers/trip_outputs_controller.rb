@@ -61,7 +61,7 @@ class TripOutputsController < ApplicationController
     # Definitions:
     # ------------
     #   Fly Out = The day we fly from original airport to destination airport
-    #   Fly In  = The day we fly from destination airport to original airport
+    #   Fly In  = The day we fly from destination airport to original airport (Way back)
     #
     # ---------------------------------
     # --- Fly out departure airport weather

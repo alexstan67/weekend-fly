@@ -56,28 +56,37 @@
           <% if !airport.local_code.nil? %>
             <div class="tag tag-info m-5"><%= "#{airport.local_code}" %></div>
           <% end %>
-          <div class="tag tag-info m-5"><%= "#{Airport.find_by(icao: airport.icao).local_code} #{airport.distance.round(1)} #{current_user.distance_unit}" %></div>
+          <div class="tag tag-info m-5"><%= "#{airport.distance.round(1)} #{current_user.distance_unit}" %></div>
           <div class="tag tag-info m-5"><%= airport.airport_type %></div>
+          <div class="tag tag-info m-5"><%= "#{airport.altitude} ft" %></div>
         </div>
         <p>Fly Out Weather</p>
         <div class="to-as-flight-element">
           <table>
             <tr>
+              <th></th>
               <% @fly_out_dep.each do |fly_out_dep| %> 
                 <th><%= fly_out_dep[0] %>h</th>
               <% end %>
             </tr>
             <tr>
+              <td>
+                <%= image_tag("icons8-airplane-take-off-64_light.png", style: "height:24px;width:24px") %>
+              </td>
               <% @fly_out_dep.each do |fly_out_dep| %> 
                 <td><img src="http://openweathermap.org/img/wn/<%= fly_out_dep[1] %>.png" alt="weather logo" title="<%= fly_out_dep[2] %>"></td>
               <% end %>
             </tr>
             <tr>
+              <th></th>
               <% @fly_out_arr[i].each do |fly_out_arr| %> 
                 <th><%= fly_out_arr[0] %>h</th>
               <% end %>
             </tr>
             <tr>
+              <td>
+                <%= image_tag("icons8-airplane-landing-64_light.png", style: "height:24px;width:24px") %>
+              </td>
               <% @fly_out_arr[i].each do |fly_out_arr| %> 
                 <td><img src="http://openweathermap.org/img/wn/<%= fly_out_arr[1] %>.png" alt="weather logo" title="<%= fly_out_arr[2] %>"></td>
               <% end %>
