@@ -51,7 +51,7 @@ class TripOutputsController < ApplicationController
             airports.country IN ( ? ) \          
           ORDER BY \
              airports.country, airports.airport_type \
-          LIMIT 3;"
+          LIMIT 2;"
 
     @filtered_airports = Airport.find_by_sql [sql, @airport.latitude, @airport.latitude, @airport.longitude, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm + margin, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm - margin, list_airport_type, list_country]
     
@@ -61,7 +61,7 @@ class TripOutputsController < ApplicationController
     # Definitions:
     # ------------
     #   Fly Out = The day we fly from original airport to destination airport
-    #   Fly In  = The day we fly from destination airport to original airport
+    #   Fly In  = The day we fly from destination airport to original airport (Way back)
     #
     # ---------------------------------
     # --- Fly out departure airport weather
@@ -139,6 +139,7 @@ class TripOutputsController < ApplicationController
     icon = []
     hour = []
     desc = []
+    buffer2 = [] 
     if @filtered_airports.count > 0
       for i in 0..@filtered_airports.count - 1
         api_call = RestClient.get 'https://api.openweathermap.org/data/3.0/onecall', {params: {lat:@filtered_airports[i].latitude, lon:@filtered_airports[i].longitude, appid:ENV["OPENWEATHERMAP_API"], exclude: "current, minutely", units: "metric"}}
@@ -149,14 +150,15 @@ class TripOutputsController < ApplicationController
           hour[k] = Time.at(fly_out_arr_weather["hourly"][j]["dt"]).utc.to_datetime.hour 
           icon[k] = fly_out_arr_weather["hourly"][j]["weather"][0]["icon"]
           desc[k] = fly_out_arr_weather["hourly"][j]["weather"][0]["description"]
-          buffer.push(hour[k], icon[k], desc[k])
+          buffer[k] = hour[k], icon[k], desc[k]
+          buffer2.push(buffer[k])
+          buffer = []
           k =+ 1
         end
         # We push all weather hours and info for a defined destination airport
-        @fly_out_arr.push(buffer)
-
+        @fly_out_arr.push(buffer2)
         # We clean the buffer array
-        buffer = []
+        buffer2 = []
       end
     end
     
