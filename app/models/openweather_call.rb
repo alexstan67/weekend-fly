@@ -1,0 +1,2 @@
+class OpenweatherCall < ApplicationRecord
+end
