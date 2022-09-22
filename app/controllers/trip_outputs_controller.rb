@@ -66,8 +66,20 @@ class TripOutputsController < ApplicationController
     # ---------------------------------
     # --- Fly out departure airport weather
     # ---------------------------------
-    api_call = RestClient.get 'https://api.openweathermap.org/data/3.0/onecall', {params: {lat:Airport.find_by(icao: @trip_input.dep_airport_icao).latitude, lon:Airport.find_by(icao: @trip_input.dep_airport_icao).longitude, appid:ENV["OPENWEATHERMAP_API"], exclude: "current, minutely", units: "metric"}}
-    fly_out_dep_weather = JSON.parse(api_call)
+    # We fist check that this api call is not currently stored in db for current pair airport_id / hour
+    target_id = Airport.find_by(icao: @trip_input.dep_airport_icao).id
+
+    if validWeatherInDB?(target_id)
+      # We take the json from the database
+      fly_out_dep_weather = JSON.parse(OpenweatherCall.where(airport_id: target_id).last.json)
+    else
+      # Entry doesn't exist in DB, we proceed to the call
+      api_call = RestClient.get 'https://api.openweathermap.org/data/3.0/onecall', {params: {lat:Airport.find_by(icao: @trip_input.dep_airport_icao).latitude, lon:Airport.find_by(icao: @trip_input.dep_airport_icao).longitude, appid:ENV["OPENWEATHERMAP_API"], exclude: "current, minutely", units: "metric"}}
+      fly_out_dep_weather = JSON.parse(api_call)
+      
+      # We create a new entry in openweather_calls table
+      createWeatherDBEntry(target_id, api_call)
+    end
 
     # First available weather info hour, index 0
     fly_out_dep_time  = fly_out_dep_weather["hourly"][0]["dt"]
@@ -142,8 +154,20 @@ class TripOutputsController < ApplicationController
     buffer2 = [] 
     if @filtered_airports.count > 0
       for i in 0..@filtered_airports.count - 1
-        api_call = RestClient.get 'https://api.openweathermap.org/data/3.0/onecall', {params: {lat:@filtered_airports[i].latitude, lon:@filtered_airports[i].longitude, appid:ENV["OPENWEATHERMAP_API"], exclude: "current, minutely", units: "metric"}}
-        fly_out_arr_weather = JSON.parse(api_call)
+        # We fist check that this api call is not currently stored in db for current pair airport_id / hour
+        target_id = @filtered_airports[i].id
+        if validWeatherInDB?(target_id)
+          # We take the json from the database
+          fly_out_arr_weather = JSON.parse(OpenweatherCall.where(airport_id: target_id).last.json)
+        else
+          # Entry doesn't exist in DB, we proceed to the call
+          api_call = RestClient.get 'https://api.openweathermap.org/data/3.0/onecall', {params: {lat:@filtered_airports[i].latitude, lon:@filtered_airports[i].longitude, appid:ENV["OPENWEATHERMAP_API"], exclude: "current, minutely", units: "metric"}}
+          fly_out_arr_weather = JSON.parse(api_call)
+      
+          # We create a new entry in openweather_calls table
+          createWeatherDBEntry(target_id, api_call)
+        end
+
         k = 0
         #TODO: Second offset needs to be checked if we fly on last possible departure hour
         for j in (fly_out_offset1 + @trip_input.eet_hour)..(fly_out_offset2 + @trip_input.eet_hour)
@@ -194,6 +218,30 @@ class TripOutputsController < ApplicationController
         @return_day = "In #{@trip_input.overnights + 1} days"
       end
     end
+  end
+
+  private
+
+  def validWeatherInDB?(target_id)
+    current_time = DateTime.now
+    if OpenweatherCall.find_by(airport_id: target_id).nil?
+      return false
+    else
+      weather_info = OpenweatherCall.where(airport_id: target_id).last
+      if weather_info.created_at.today? && weather_info.created_at.utc.hour == current_time.utc.hour
+        return true
+      else
+        return false
+      end
+    end  
+  end
+
+  def createWeatherDBEntry(target_id, weather_json)
+    # We create a new entry in openweather_calls table
+    new_entry = OpenweatherCall.new
+    new_entry.airport_id = target_id
+    new_entry.json = weather_json
+    new_entry.save
   end
 
 end
