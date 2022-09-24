@@ -20,7 +20,7 @@
     </tr>
     <tr>
       <td><%= f.label :distance_nm, "distance (#{User.find_by(id: current_user.id).distance_unit})" %></td>
-      <td><%= f.number_field :distance_nm %></td>
+      <td><%= f.text_field :distance_nm %></td>
     </tr>
     <tr>
       <td><%= f.label :overnights %></td>

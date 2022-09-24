@@ -12,13 +12,12 @@ class TripInputsController < ApplicationController
   def create
     @trip_input = TripInput.new(trip_input_params)
     @trip_input.user_id = current_user.id
-    @trip_input.distance_nm = @trip_input.distance_nm.to_i
+    @trip_input.distance_nm = @trip_input.distance_nm.to_f
     @trip_input.eet_hour = @trip_input.eet_hour.to_i
 
     # Distance unit conversion
     if User.find_by(id: current_user.id).distance_unit == "km"
-      @trip_input.distance_nm *= 1.852
-      @trip_input.distance_nm = @trip_input.distance_nm.to_i
+      @trip_input.distance_nm /= 1.852
     end
 
     # Indicative GS calculation in kts

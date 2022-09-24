@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_22_163946) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_24_173724) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -50,7 +50,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_22_163946) do
   create_table "trip_inputs", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "dep_airport_icao", null: false
-    t.integer "distance_nm", null: false
+    t.decimal "distance_nm", precision: 4, scale: 1, null: false
     t.integer "eet_hour", null: false
     t.integer "average_gs_kts", null: false
     t.datetime "created_at", null: false
