@@ -22,19 +22,18 @@ class TripInputsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     assert_difference('TripInput.count') do
-      post trip_inputs_path, params: { trip_input: { user_id: @user.id, dep_airport_icao: "ELLX", eet_hour: 2, distance_nm: 100, overnights: 2, small_airport: true, medium_airport: true, large_airport: true, international_flight: false}}
+      post trip_inputs_path, params: { trip_input: { user_id: @user.id, dep_airport_icao: "ELLX", eet_hour: 2, distance: 100, distance_unit: "nm", overnights: 2, small_airport: true, medium_airport: true, large_airport: true, international_flight: false}}
     end
-
     assert_redirected_to trip_outputs_home_url
   end
-  
+
   test "should not create a new trip_input" do
     login_as users(:robert)
     get new_trip_input_url
     assert_response :success
 
     assert_no_difference('TripInput.count') do
-      post trip_inputs_path, params: { trip_input: { user_id: @user.id, dep_airport_icao: "ZZZZ", eet_hour: 2, distance_nm: 100, overnights: 2, small_airport: true, medium_airport: true, large_airport: false, international_flight: true}}
+      post trip_inputs_path, params: { trip_input: { user_id: @user.id, dep_airport_icao: "ZZZZ", eet_hour: 2, distance: 100, distance_unit: "nm", overnights: 2, small_airport: true, medium_airport: true, large_airport: false, international_flight: true}}
     end
 
   end

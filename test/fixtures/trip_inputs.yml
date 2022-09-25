@@ -1,17 +1,27 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
+trip_input_one:
   user: john
   dep_airport_icao: ELLX
   overnights: 1
-  distance_nm: 200
+  distance: 200
+  distance_unit: nm
   eet_hour: 1
-  average_gs_kts: 100
+  average_gs_kts: 85
+  small_airport: true
+  medium_airport: true
+  large_airport: false
+  international_flight: true
 
-two:
+trip_input_two:
   user: robert
-  dep_airport_icao: LFGC
+  dep_airport_icao: ZZZZ
   overnights: 2
-  distance_nm: 200
+  distance: 200
+  distance_unit: km
   eet_hour: 2
-  average_gs_kts: 100
+  average_gs_kts: 85
+  small_airport: true
+  medium_airport: true
+  large_airport: false
+  international_flight: true
