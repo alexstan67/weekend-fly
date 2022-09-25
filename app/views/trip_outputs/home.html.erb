@@ -9,7 +9,7 @@
       <%= "#{Airport.find_by(icao: @trip_input.dep_airport_icao).name} ( #{@trip_input.dep_airport_icao} | #{Airport.find_by(icao: @trip_input.dep_airport_icao).local_code} ) #{NormalizeCountry(Airport.find_by(icao: @trip_input.dep_airport_icao).country, :to => :emoji)}"  %>
 
       <h3>Distance & E.E.T.</h2>
-      <%= "#{@trip_input.distance_nm}nm (with 10% margin) | #{pluralize(@trip_input.eet_hour, "hour")} flight" %>
+      <%= "#{@trip_input.distance}#{@trip_input.distance_unit} (with 10% margin) | #{pluralize(@trip_input.eet_hour, "hour")} flight" %>
 
       <h3>Departure Day</h3>
       <%= @departure_day %>
@@ -56,7 +56,7 @@
           <% if !airport.local_code.nil? %>
             <div class="tag tag-info m-5"><%= "#{airport.local_code}" %></div>
           <% end %>
-          <div class="tag tag-info m-5"><%= "#{airport.distance.round(1)} #{current_user.distance_unit}" %></div>
+          <div class="tag tag-info m-5"><%= "#{distance_convert(airport.distance, @trip_input.distance_unit)} #{@trip_input.distance_unit}" %></div>
           <div class="tag tag-info m-5"><%= airport.airport_type %></div>
           <div class="tag tag-info m-5"><%= "#{airport.altitude} ft" %></div>
         </div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_22_163946) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_25_110801) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -50,7 +50,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_22_163946) do
   create_table "trip_inputs", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "dep_airport_icao", null: false
-    t.integer "distance_nm", null: false
+    t.integer "distance", null: false
     t.integer "eet_hour", null: false
     t.integer "average_gs_kts", null: false
     t.datetime "created_at", null: false
@@ -60,6 +60,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_22_163946) do
     t.boolean "medium_airport", default: true
     t.boolean "large_airport", default: false
     t.boolean "international_flight", default: false
+    t.string "distance_unit", default: "nm", null: false
     t.index ["user_id"], name: "index_trip_inputs_on_user_id"
   end
 
@@ -85,7 +86,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_22_163946) do
     t.datetime "updated_at", null: false
     t.string "first_name"
     t.string "last_name"
-    t.string "distance_unit", default: "km"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

@@ -32,11 +32,6 @@
       <%= f.password_field :current_password, autocomplete: "current-password" %>
     </div>
 
-    <div class="forms-element">
-      <%= f.label :distance_unit %><br />
-      <%= f.select :distance_unit, [ "km", "nm" ] %>
-    </div>
-
     <div class="forms-submit mt-10">
       <%= f.submit "Update", class: "btn btn-success" %>
     </div>

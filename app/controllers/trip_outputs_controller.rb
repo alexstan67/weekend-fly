@@ -12,7 +12,12 @@ class TripOutputsController < ApplicationController
     @airport = Airport.where(icao: @trip_input.dep_airport_icao).order(id: :desc).first
 
     # SQL Distance calculation with 10% margin
-    distance_nm = @trip_input.distance_nm
+    if @trip_input.distance_unit == "nm"
+      distance_nm = @trip_input.distance
+    else
+      distance_nm = @trip_input.distance.to_f / 1.852
+    end
+
     @margin = 0.1
     margin = @margin * distance_nm
 
