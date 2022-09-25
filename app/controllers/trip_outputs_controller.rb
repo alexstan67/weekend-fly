@@ -4,6 +4,12 @@ require "normalize_country"
 
 class TripOutputsController < ApplicationController
   def home
+    # Variables init
+    @errors = []
+    @errors_label = []
+    @errors_label[1] = "Flight back Impossible today with no overnights"
+    @errors_label[2] = "No destination airport found"
+
     # We load logged in user last Trip_input data
     @trip_input = TripInput.where(user_id: current_user.id).order(id: :desc).first
 
@@ -59,15 +65,20 @@ class TripOutputsController < ApplicationController
           LIMIT 2;"
 
     @filtered_airports = Airport.find_by_sql [sql, @airport.latitude, @airport.latitude, @airport.longitude, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm + margin, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm - margin, list_airport_type, list_country]
-    
+
+    # We check that we have at least 1 destination airport
+    @errors.push(2) if @filtered_airports.count == 0
+
+
     # --------------------------------------------------------------------
-    # --- Openweather API
+    # --- Openweather API - If no errors raised
     # --------------------------------------------------------------------
     # Definitions:
     # ------------
     #   Fly Out = The day we fly from original airport to destination airport
     #   Fly In  = The day we fly from destination airport to original airport (Way back)
-    #
+    
+
     # ---------------------------------
     # --- Fly out departure airport weather
     # ---------------------------------
@@ -95,13 +106,39 @@ class TripOutputsController < ApplicationController
     fly_out_sunrise_hour = Time.at(fly_out_sunrise_time).utc.to_datetime.hour
     fly_out_sunset_time = fly_out_dep_weather["daily"][0]["sunset"]
     fly_out_sunset_hour = Time.at(fly_out_sunset_time).utc.to_datetime.hour
-    
+      
     # Variable init
     @fly_out_dep = []
     fly_out_offset1 = 0
     fly_out_offset2 = 0
     buffer = []
-    
+   
+    # Return Date
+    if first_available_hour < fly_out_sunset_hour 
+      #We take off still today
+      if @trip_input.overnights == 0
+        if first_available_hour + (@trip_input.eet_hour * 2) <= fly_out_sunset_hour
+          @return_day = "Today"
+        else
+          @return_day = "Tomorrow"
+          @errors.push(1)
+        end
+      elsif @trip_input.overnights == 1
+        @return_day = "Tomorrow"
+      else
+        @return_day = "In #{@trip_input.overnights} days"
+      end
+    else
+      # We can't take off today, so it will be tomorrow
+      if @trip_input.overnights == 0 
+        @return_day = "Tomorrow"
+      elsif @trip_input.overnights == 1
+        @return_day = "After-Tomorrow"
+      else
+        @return_day = "In #{@trip_input.overnights + 1} days"
+      end
+    end
+
     # case 1: sunrise < current_time < sunset
     #   Departure: today
     if first_available_hour >= fly_out_sunrise_hour and first_available_hour <= (fly_out_sunset_hour - @trip_input.eet_hour)
@@ -115,6 +152,7 @@ class TripOutputsController < ApplicationController
         @fly_out_dep.push(buffer)
         buffer = []
       end
+      @departure_day = "Today"
     end
     
     # case 2: current_time > sunset
@@ -130,6 +168,7 @@ class TripOutputsController < ApplicationController
         @fly_out_dep.push(buffer)
         buffer = []
       end
+      @departure_day = "Tomorrow"
     end
     
     # case 3: current_time < sunrise
@@ -145,84 +184,65 @@ class TripOutputsController < ApplicationController
         @fly_out_dep.push(buffer)
         buffer = []
       end
+      @departure_day = "Today"
     end
 
     # ---------------------------------
     # --- Fly out arrival airport weather
     # ---------------------------------
-    # Variable init
-    @fly_out_arr = []
-    fly_out_arr_weather = []
-    icon = []
-    hour = []
-    desc = []
-    buffer2 = [] 
-    if @filtered_airports.count > 0
-      for i in 0..@filtered_airports.count - 1
-        # We fist check that this api call is not currently stored in db for current pair airport_id / hour
-        target_id = @filtered_airports[i].id
-        if validWeatherInDB?(target_id)
-          # We take the json from the database
-          fly_out_arr_weather = JSON.parse(OpenweatherCall.where(airport_id: target_id).last.json)
-        else
-          # Entry doesn't exist in DB, we proceed to the call
-          api_call = RestClient.get 'https://api.openweathermap.org/data/3.0/onecall', {params: {lat:@filtered_airports[i].latitude, lon:@filtered_airports[i].longitude, appid:ENV["OPENWEATHERMAP_API"], exclude: "current, minutely", units: "metric"}}
-          fly_out_arr_weather = JSON.parse(api_call)
-      
-          # We create a new entry in openweather_calls table
-          createWeatherDBEntry(target_id, api_call)
-        end
+    unless @errors.count > 0
+      # No need to go further and check weather if errors raised
+      # Variable init
+      @fly_out_arr = []
+      fly_out_arr_weather = []
+      icon = []
+      hour = []
+      desc = []
+      buffer2 = [] 
+      if @filtered_airports.count > 0
+        for i in 0..@filtered_airports.count - 1
+          # We fist check that this api call is not currently stored in db for current pair airport_id / hour
+          target_id = @filtered_airports[i].id
+          if validWeatherInDB?(target_id)
+            # We take the json from the database
+            fly_out_arr_weather = JSON.parse(OpenweatherCall.where(airport_id: target_id).last.json)
+          else
+            # Entry doesn't exist in DB, we proceed to the call
+            api_call = RestClient.get 'https://api.openweathermap.org/data/3.0/onecall', {params: {lat:@filtered_airports[i].latitude, lon:@filtered_airports[i].longitude, appid:ENV["OPENWEATHERMAP_API"], exclude: "current, minutely", units: "metric"}}
+            fly_out_arr_weather = JSON.parse(api_call)
+        
+            # We create a new entry in openweather_calls table
+            createWeatherDBEntry(target_id, api_call)
+          end
 
-        k = 0
-        #TODO: Second offset needs to be checked if we fly on last possible departure hour
-        for j in (fly_out_offset1 + @trip_input.eet_hour)..(fly_out_offset2 + @trip_input.eet_hour)
-          hour[k] = Time.at(fly_out_arr_weather["hourly"][j]["dt"]).utc.to_datetime.hour 
-          icon[k] = fly_out_arr_weather["hourly"][j]["weather"][0]["icon"]
-          desc[k] = fly_out_arr_weather["hourly"][j]["weather"][0]["description"]
-          buffer[k] = hour[k], icon[k], desc[k]
-          buffer2.push(buffer[k])
-          buffer = []
-          k =+ 1
+          k = 0
+          #TODO: Second offset needs to be checked if we fly on last possible departure hour
+          for j in (fly_out_offset1 + @trip_input.eet_hour)..(fly_out_offset2 + @trip_input.eet_hour)
+            hour[k] = Time.at(fly_out_arr_weather["hourly"][j]["dt"]).utc.to_datetime.hour 
+            icon[k] = fly_out_arr_weather["hourly"][j]["weather"][0]["icon"]
+            desc[k] = fly_out_arr_weather["hourly"][j]["weather"][0]["description"]
+            buffer[k] = hour[k], icon[k], desc[k]
+            buffer2.push(buffer[k])
+            buffer = []
+            k =+ 1
+          end
+          # We push all weather hours and info for a defined destination airport
+          @fly_out_arr.push(buffer2)
+          # We clean the buffer array
+          buffer2 = []
         end
-        # We push all weather hours and info for a defined destination airport
-        @fly_out_arr.push(buffer2)
-        # We clean the buffer array
-        buffer2 = []
       end
-    end
-    
-    #---------------------------------
-    # Fly in arrival airport weather
-    # ---------------------------------
-    # Arrival weather from origin airport
-    # Openweathermaps provides:
-    #   - hourly: 48  hours  (max 1 overnight)
-    #   - daily:  8   days   (more than 1 overnight)
-    
-    
-    
-    # Return Date
-    if first_available_hour < fly_out_sunset_hour 
-      #We take off still today
-      @departure_day = "Today"
-      if @trip_input.overnights == 0
-        @return_day = "Today"
-      elsif @trip_input.overnights == 1
-        @return_day = "Tomorrow"
-      else
-        @return_day = "In #{@trip_input.overnights} days"
-      end
-    else
-      # We can't take off today, so it will be tomorrow
-      @departure_day = "Tomorrow"
-      if @trip_input.overnights == 0 
-        @return_day = "Tomorrow"
-      elsif @trip_input.overnights == 1
-        @return_day = "After-Tomorrow"
-      else
-        @return_day = "In #{@trip_input.overnights + 1} days"
-      end
-    end
+      
+      #---------------------------------
+      # Fly in arrival airport weather
+      # ---------------------------------
+      # Arrival weather from origin airport
+      # Openweathermaps provides:
+      #   - hourly: 48  hours  (max 1 overnight)
+      #   - daily:  8   days   (more than 1 overnight)
+      
+
+    end    
   end
 
   private
