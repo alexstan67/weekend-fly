@@ -35,7 +35,8 @@ class TripInputsTest < ApplicationSystemTestCase
     #fill_in "Departure airport", with: "LFAW"
     #fill_in "Departure in (hours)", with: "3"
     #fill_in 'Estimated enroute time (hours)', with: "2"
-    #fill_in :distance_nm, with: "200"
+    #fill_in :distance, with: "200"
+    #fill_in :distance_unit, with: "nm"
     fill_in "Overnights", with: "3"
     #fill_in "International flight", with: false
     click_on "Next"

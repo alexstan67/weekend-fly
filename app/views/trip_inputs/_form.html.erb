@@ -19,12 +19,18 @@
       <td><%= f.number_field :eet_hour %></td>
     </tr>
     <tr>
-      <td><%= f.label :distance_nm, "distance (#{User.find_by(id: current_user.id).distance_unit})" %></td>
-      <td><%= f.number_field :distance_nm %></td>
+      <td>
+        <%= f.label :distance %>
+        <%= f.radio_button :distance_unit, "nm", checked: true %>
+        <%= f.label :distance_unit, "nm" %>
+        <%= f.radio_button :distance_unit, "km" %>
+        <%= f.label :distance_unit, "km" %>
+      </td>
+      <td><%= f.number_field :distance %></td>
     </tr>
     <tr>
       <td><%= f.label :overnights %></td>
-      <td><%= f.number_field :overnights, in: 0..7, value: 1 %></td>
+      <td><%= f.number_field :overnights, in: 0..7 %></td>
     </tr>
     <tr>
       <td><%= f.label :small_airport %></td>
