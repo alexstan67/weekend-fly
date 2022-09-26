@@ -44,11 +44,11 @@
   </div>
   
   <% if @errors.count == 0 %>
-    <div class="to-container-airport-selection m-20 p-20">
+    <div class="to-container-airport-selection">
       <% i = 0 %>
       <% @filtered_airports.each do |airport| %>
-        <div class="to-as-flight p-10 mb-10">
-          <div class="to-as-flight-element">
+        <div class="to-as-flight p-20 m-20">
+          <div class="to-as-flight-element to-as-fe-airport-title">
             <div class="m-5"><%= "#{NormalizeCountry(Airport.find_by(icao: airport.icao).country, :to => :emoji)} #{airport.name}" %></div>
             <div class="tag tag-info m-5"><%= "#{airport.icao}" %></div>
             <% if !airport.local_code.nil? %>
@@ -59,7 +59,7 @@
             <div class="tag tag-info m-5"><%= "#{airport.altitude} ft" %></div>
           </div>
 
-          <p>Fly Out Weather</p>
+          <h3>Outgoing Weather</h3>
           <div class="to-as-flight-element">
             <table>
               <tr>
@@ -93,7 +93,7 @@
             </table>
           </div>
 
-          <p>Fly In Weather</p>
+          <h3>Ingoing Weather</h3>
           <div class="to-as-flight-element">
             <table>
               <tr>
