@@ -18,4 +18,5 @@ class TripInput < ApplicationRecord
   validates_inclusion_of :medium_airport, in: [true, false]
   validates_inclusion_of :large_airport, in: [true, false]
   validates_inclusion_of :international_flight, in: [true, false]
+  validates_inclusion_of :icao_airport, in: [true, false]
 end

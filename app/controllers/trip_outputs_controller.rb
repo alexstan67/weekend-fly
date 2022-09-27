@@ -60,12 +60,21 @@ class TripOutputsController < ApplicationController
           AND \
             airport_type IN ( ? ) \
           AND \
-            airports.country IN ( ? ) \          
+            airports.country IN ( ? ) \
+          AND \
+            airports.icao ~ ? \          
           ORDER BY \
              airports.country, airports.airport_type \
           LIMIT ?;"
+    
+    # Filter on icao airports in result
+    if @trip_input.icao_airport
+      icao_filter = '^[A-Z]{4}$'
+    else
+      icao_filter = '\S'
+    end
 
-    @filtered_airports = Airport.find_by_sql [sql, @airport.latitude, @airport.latitude, @airport.longitude, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm + margin, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm - margin, list_airport_type, list_country, @limit]
+    @filtered_airports = Airport.find_by_sql [sql, @airport.latitude, @airport.latitude, @airport.longitude, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm + margin, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm - margin, list_airport_type, list_country, icao_filter, @limit]
 
     # We check that we have at least 1 destination airport
     @errors.push(2) if @filtered_airports.count == 0
@@ -85,7 +94,6 @@ class TripOutputsController < ApplicationController
     # -------------------------------------------------
     # We fist check that this api call is not currently stored in db for current pair airport_id / hour
     target_id = Airport.find_by(icao: @trip_input.dep_airport_icao).id
-
     if validWeatherInDB?(target_id)
       # We take the json from the database
       fly_out_dep_weather = JSON.parse(OpenweatherCall.where(airport_id: target_id).last.json)
@@ -118,25 +126,24 @@ class TripOutputsController < ApplicationController
     if first_available_hour  > (fly_out_sunset_hour - @trip_input.eet_hour)
       @day_departure_offset = 1
     end
-
+    
     # Return Date Exceptions
     if @trip_input.overnights == 0 && (first_available_hour + (@trip_input.eet_hour * 2) >= fly_out_sunset_hour)
       # Fly out and fly in same day not possible
       @day_return_offset = 1
       @errors.push(1)
     end
-    @day_return_offset += 1 if @day_departure_offset == 1
 
     # case 1: sunrise < current_time < sunset
     # Departure: today
-    if first_available_hour >= fly_out_sunrise_hour and first_available_hour <= (fly_out_sunset_hour - @trip_input.eet_hour)
+    if first_available_hour >= fly_out_sunrise_hour and first_available_hour < (fly_out_sunset_hour - @trip_input.eet_hour)
       fly_out_offset1 = 1 # We consider it's not possible to take off the same hour
       fly_out_offset2 = fly_out_offset1 + fly_out_sunset_hour - @trip_input.eet_hour - first_available_hour - 1
     end
     
     # case 2: current_time > sunset
     # Departure: tomorrow
-    if first_available_hour > (fly_out_sunset_hour - @trip_input.eet_hour)
+    if first_available_hour >= (fly_out_sunset_hour - @trip_input.eet_hour)
       fly_out_offset1 = 24 - first_available_hour + fly_out_sunrise_hour
       fly_out_offset2 = fly_out_offset1 + fly_out_sunset_hour - @trip_input.eet_hour - fly_out_sunrise_hour
       @day_departure_offset = 1
@@ -148,6 +155,8 @@ class TripOutputsController < ApplicationController
       fly_out_offset1 = fly_out_sunrise_hour - first_available_hour
       fly_out_offset2 = fly_out_offset1 + fly_out_sunset_hour - fly_out_sunrise_hour - @trip_input.eet_hour
     end
+
+    @day_return_offset += 1 if @day_departure_offset == 1
     
     for i in fly_out_offset1..fly_out_offset2
       hour  = "#{Time.at(fly_out_dep_weather["hourly"][i]["dt"]).utc.to_datetime.hour}h"

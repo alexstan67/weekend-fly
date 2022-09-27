@@ -32,6 +32,11 @@
       <% else %>
         <span class="tag tag-info">national</span>
       <% end %>
+      <% if @trip_input.icao_airport %>
+        <span class="tag tag-info">icao</span>
+      <% else %>
+        <span class="tag tag-info">all</span>
+      <% end %>
       <span class="tag tag-danger">Limit <%= @limit %></span>
 
       <div class="mt-20">
