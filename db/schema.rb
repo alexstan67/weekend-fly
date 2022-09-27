@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_25_110801) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_27_144319) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -61,6 +61,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_25_110801) do
     t.boolean "large_airport", default: false
     t.boolean "international_flight", default: false
     t.string "distance_unit", default: "nm", null: false
+    t.boolean "icao_airport", default: false, null: false
     t.index ["user_id"], name: "index_trip_inputs_on_user_id"
   end
 

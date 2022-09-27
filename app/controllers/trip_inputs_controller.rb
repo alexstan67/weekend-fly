@@ -46,6 +46,6 @@ class TripInputsController < ApplicationController
   private
 
   def trip_input_params
-    params.require(:trip_input).permit(:user_id, :dep_airport_icao, :overnights, :distance, :distance_unit, :eet_hour, :small_airport, :medium_airport, :large_airport, :international_flight)
+    params.require(:trip_input).permit(:user_id, :dep_airport_icao, :overnights, :distance, :distance_unit, :eet_hour, :small_airport, :medium_airport, :large_airport, :international_flight, :icao_airport)
   end
 end
