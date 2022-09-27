@@ -161,6 +161,12 @@ class TripOutputsController < ApplicationController
     # --- Fly out arrival airport weather (Landing)
     # ---------------------------------------------
     unless @errors.count > 0
+      # We load the markers for the map
+      @markers = []
+      @filtered_airports.each do |airport|
+        hash = { lat: airport.latitude, lon: airport.longitude }
+        @markers << hash
+      end
       # No need to go further and check weather if errors raised
       
       # Variable init

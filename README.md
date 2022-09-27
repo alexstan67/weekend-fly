@@ -13,11 +13,18 @@ For General Aviation fellows, find a destination !
 
 ## Installation
 Create a .env file with following keys:
+
 `OPENWEATHERMAP_API=`
+
 `MAIL_USERNAME=`
+
 `MAIL_PASSWORD=`
+
 `MAIL_DOMAIN=`
+
 `MAIL_SMTP_SERVER=`
+
+`MAPBOX_API_KEY=`
 
 `bundle install`
 
@@ -34,6 +41,7 @@ Feel free to customize `config/database.yml` following your requirements.
 `rails db:seed`
 
 `rake import:airports`
+
 `rake import:countries`
 
 ## License

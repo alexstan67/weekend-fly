@@ -2,7 +2,7 @@
 
 <div class="to-container p-5">
   <div class="to-container-flight-info m-20">
-    <div class="to-container-flight-summary p-20">
+    <div class="to-container-flight-summary p-20 mr-10">
       <h1><em>Flight</em> Summary</h1>
     
       <h3>Departure Airport</h2>
@@ -38,8 +38,10 @@
       </div>
 
     </div>
-    <div class="to-container-map">
-      coming map
+    <div class="to-container-map"
+      data-controller="mapbox"
+      data-mapbox-markers-value="<%= @markers.to_json %>"
+      data-mapbox-api-key-value="<%= ENV['MAPBOX_API_KEY'] %>">
     </div>
   </div>
   
