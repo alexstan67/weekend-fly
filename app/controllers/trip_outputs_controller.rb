@@ -164,7 +164,7 @@ class TripOutputsController < ApplicationController
       # We load the markers for the map
       @markers = []
       @filtered_airports.each do |airport|
-        hash = { lat: airport.latitude, lon: airport.longitude }
+        hash = { lat: airport.latitude, lon: airport.longitude, info_window: render_to_string(partial: "info_window", locals: {airport: airport}) }
         @markers << hash
       end
       # No need to go further and check weather if errors raised
