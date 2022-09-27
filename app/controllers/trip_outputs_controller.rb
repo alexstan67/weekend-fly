@@ -9,6 +9,7 @@ class TripOutputsController < ApplicationController
     @errors_label = []
     @errors_label[1] = "Flight back Impossible today with no overnights"
     @errors_label[2] = "No destination airport found"
+    @limit = 10
 
     # We load logged in user last Trip_input data
     @trip_input = TripInput.where(user_id: current_user.id).order(id: :desc).first
@@ -62,9 +63,9 @@ class TripOutputsController < ApplicationController
             airports.country IN ( ? ) \          
           ORDER BY \
              airports.country, airports.airport_type \
-          LIMIT 5;"
+          LIMIT ?;"
 
-    @filtered_airports = Airport.find_by_sql [sql, @airport.latitude, @airport.latitude, @airport.longitude, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm + margin, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm - margin, list_airport_type, list_country]
+    @filtered_airports = Airport.find_by_sql [sql, @airport.latitude, @airport.latitude, @airport.longitude, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm + margin, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm - margin, list_airport_type, list_country, @limit]
 
     # We check that we have at least 1 destination airport
     @errors.push(2) if @filtered_airports.count == 0
