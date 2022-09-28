@@ -42,6 +42,13 @@ class TripOutputsController < ApplicationController
       list_country = origin_country
     end
 
+    # SQL Filter on icao airports in result
+    if @trip_input.icao_airport
+      icao_filter = '^[A-Z]{4}$'
+    else
+      icao_filter = '\S'
+    end
+
     # SQL query implementing Haversine formula to calculate distance in nm based on GPS coordinates
     sql = "SELECT \
             (((acos(sin(( ? * pi() / 180)) * sin((latitude * pi() / 180)) + cos(( ? * pi() / 180)) \
@@ -67,13 +74,6 @@ class TripOutputsController < ApplicationController
              airports.country, airports.airport_type \
           LIMIT ?;"
     
-    # Filter on icao airports in result
-    if @trip_input.icao_airport
-      icao_filter = '^[A-Z]{4}$'
-    else
-      icao_filter = '\S'
-    end
-
     @filtered_airports = Airport.find_by_sql [sql, @airport.latitude, @airport.latitude, @airport.longitude, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm + margin, @airport.latitude, @airport.latitude, @airport.longitude, distance_nm - margin, list_airport_type, list_country, icao_filter, @limit]
 
     # We check that we have at least 1 destination airport
@@ -162,7 +162,8 @@ class TripOutputsController < ApplicationController
       hour  = "#{Time.at(fly_out_dep_weather["hourly"][i]["dt"]).utc.to_datetime.hour}h"
       icon  = fly_out_dep_weather["hourly"][i]["weather"][0]["icon"]
       desc = fly_out_dep_weather["hourly"][i]["weather"][0]["description"]
-      buffer.push(hour, icon, desc)
+      visi = fly_out_dep_weather["hourly"][i]["visibility"]
+      buffer.push(hour, icon, desc, visi)
       @fly_out_dep.push(buffer)
       buffer = []
     end
@@ -185,6 +186,7 @@ class TripOutputsController < ApplicationController
       icon = []
       hour = []
       desc = []
+      visi = []
       buffer2 = [] 
 
       for i in 0..@filtered_airports.count - 1
@@ -210,7 +212,8 @@ class TripOutputsController < ApplicationController
           hour[k] = "#{Time.at(fly_out_arr_weather["hourly"][j]["dt"]).utc.to_datetime.hour}h"
           icon[k] = fly_out_arr_weather["hourly"][j]["weather"][0]["icon"]
           desc[k] = fly_out_arr_weather["hourly"][j]["weather"][0]["description"]
-          buffer[k] = hour[k], icon[k], desc[k]
+          visi[k] = fly_out_arr_weather["hourly"][j]["visibility"]
+          buffer[k] = hour[k], icon[k], desc[k, visi[k]]
           buffer2.push(buffer[k])
           buffer = []
           k =+ 1

@@ -81,7 +81,16 @@
                   <%= image_tag("icons8-airplane-take-off-64_light.png", style: "height:24px;width:24px") %>
                 </td>
                 <% @fly_out_dep.each do |fly_out_dep| %> 
-                  <td><img src="http://openweathermap.org/img/wn/<%= fly_out_dep[1] %>.png" alt="weather logo" title="<%= fly_out_dep[2] %>"></td>
+                  <td>
+                    <div class="to-cell-content">
+                      <img src="http://openweathermap.org/img/wn/<%= fly_out_dep[1] %>.png" alt="weather logo" title="<%= fly_out_dep[2] %>">
+                      <% if fly_out_dep[3] <= 1500 %>
+                        <div class="tag tag-warning">VISI</div>
+                      <% elsif fly_out_dep[3] > 1500 && fly_out_dep[3] < 5000 %>
+                        <div class="tag tag-danger">VISI</div>
+                      <% end %>
+                    </div>
+                  </td>
                 <% end %>
               </tr>
               <tr>
@@ -95,7 +104,16 @@
                   <%= image_tag("icons8-airplane-landing-64_light.png", style: "height:24px;width:24px") %>
                 </td>
                 <% @fly_out_arr[i].each do |fly_out_arr| %> 
-                  <td><img src="http://openweathermap.org/img/wn/<%= fly_out_arr[1] %>.png" alt="weather logo" title="<%= fly_out_arr[2] %>"></td>
+                  <td>
+                    <div class="to-cell-content">
+                      <img src="http://openweathermap.org/img/wn/<%= fly_out_arr[1] %>.png" alt="weather logo" title="<%= fly_out_arr[2] %>">
+                      <% if !fly_out_arr[3].nil? && fly_out_arr[3] <= 1500 %>
+                        <div class="tag tag-warning">VISI</div>
+                      <% elsif !fly_out_arr[3].nil? && fly_out_arr[3] > 1500 && fly_out_arr[3] < 5000 %>
+                        <div class="tag tag-danger">VISI</div>
+                      <% end %>
+                    </div>
+                  </td>
                 <% end %>
               </tr>
             </table>
