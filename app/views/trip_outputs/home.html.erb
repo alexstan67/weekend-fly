@@ -84,10 +84,17 @@
                   <td>
                     <div class="to-cell-content">
                       <img src="http://openweathermap.org/img/wn/<%= fly_out_dep[1] %>.png" alt="weather logo" title="<%= fly_out_dep[2] %>">
-                      <% if fly_out_dep[3] <= 1500 %>
+                      <% if fly_out_dep[3] == 1 %>
                         <div class="tag tag-warning">VISI</div>
-                      <% elsif fly_out_dep[3] > 1500 && fly_out_dep[3] < 5000 %>
+                      <% elsif fly_out_dep[3] == 2 %>
                         <div class="tag tag-danger">VISI</div>
+                      <% end %>
+                      <% if fly_out_dep[4] == 1 %>
+                        <div class="tag tag-warning">CEIL</div>
+                      <% elsif fly_out_dep[4] == 2 %>
+                        <div class="tag tag-danger">CEIL</div>
+                      <% else %>
+                        <div class="tag tag-success">CEIL</div>
                       <% end %>
                     </div>
                   </td>
@@ -107,9 +114,9 @@
                   <td>
                     <div class="to-cell-content">
                       <img src="http://openweathermap.org/img/wn/<%= fly_out_arr[1] %>.png" alt="weather logo" title="<%= fly_out_arr[2] %>">
-                      <% if !fly_out_arr[3].nil? && fly_out_arr[3] <= 1500 %>
+                      <% if fly_out_arr[3] == 1 %>
                         <div class="tag tag-warning">VISI</div>
-                      <% elsif !fly_out_arr[3].nil? && fly_out_arr[3] > 1500 && fly_out_arr[3] < 5000 %>
+                      <% elsif fly_out_arr[3] == 2 %>
                         <div class="tag tag-danger">VISI</div>
                       <% end %>
                     </div>
