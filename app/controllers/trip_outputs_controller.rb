@@ -94,7 +94,7 @@ class TripOutputsController < ApplicationController
     # -------------------------------------------------
     # We fist check that this api call is not currently stored in db for current pair airport_id / hour
     target_id = Airport.find_by(icao: @trip_input.dep_airport_icao).id
-    if validWeatherInDB?(target_id)
+    if valid_weather_in_db?(target_id)
       # We take the json from the database
       fly_out_dep_weather = JSON.parse(OpenweatherCall.where(airport_id: target_id).last.json)
     else
@@ -103,7 +103,7 @@ class TripOutputsController < ApplicationController
       fly_out_dep_weather = JSON.parse(api_call)
       
       # We create a new entry in openweather_calls table
-      createWeatherDBEntry(target_id, api_call)
+      create_weather_db_entry(target_id, api_call)
     end
 
     # First available weather info hour, index 0
@@ -159,11 +159,16 @@ class TripOutputsController < ApplicationController
     @day_return_offset += 1 if @day_departure_offset == 1
     
     for i in fly_out_offset1..fly_out_offset2
-      hour  = "#{Time.at(fly_out_dep_weather["hourly"][i]["dt"]).utc.to_datetime.hour}h"
-      icon  = fly_out_dep_weather["hourly"][i]["weather"][0]["icon"]
-      desc = fly_out_dep_weather["hourly"][i]["weather"][0]["description"]
-      visi = fly_out_dep_weather["hourly"][i]["visibility"]
-      buffer.push(hour, icon, desc, visi)
+      hour  =         "#{Time.at(fly_out_dep_weather["hourly"][i]["dt"]).utc.to_datetime.hour}h"
+      icon  =         fly_out_dep_weather["hourly"][i]["weather"][0]["icon"]
+      desc =          fly_out_dep_weather["hourly"][i]["weather"][0]["description"]
+      visi =          fly_out_dep_weather["hourly"][i]["visibility"]
+      visi_score =    get_visibility_score(visi.to_i) 
+      temp =          fly_out_dep_weather["hourly"][i]["temp"]
+      dew_point =     fly_out_dep_weather["hourly"][i]["dew_point"]
+      ceiling_score = get_ceiling_score(temp.to_i, dew_point.to_i)
+      
+      buffer.push(hour, icon, desc, visi_score, ceiling_score)
       @fly_out_dep.push(buffer)
       buffer = []
     end
@@ -187,12 +192,15 @@ class TripOutputsController < ApplicationController
       hour = []
       desc = []
       visi = []
+      visi_score = []
+      ceiling = []
+      ceiling_score = []
       buffer2 = [] 
 
       for i in 0..@filtered_airports.count - 1
         # We fist check that this api call is not currently stored in db for current pair airport_id / hour
         target_id = @filtered_airports[i].id
-        if validWeatherInDB?(target_id)
+        if valid_weather_in_db?(target_id)
           # We take the json from the database
           fly_out_arr_weather = JSON.parse(OpenweatherCall.where(airport_id: target_id).last.json)
         else
@@ -201,7 +209,7 @@ class TripOutputsController < ApplicationController
           fly_out_arr_weather = JSON.parse(api_call)
       
           # We create a new entry in openweather_calls table
-          createWeatherDBEntry(target_id, api_call)
+          create_weather_db_entry(target_id, api_call)
         end
 
         k = 0
@@ -209,11 +217,16 @@ class TripOutputsController < ApplicationController
         fly_out_offset3 = fly_out_offset1 + @trip_input.eet_hour
         fly_out_offset4 = fly_out_offset2 + @trip_input.eet_hour
         for j in fly_out_offset3..fly_out_offset4
-          hour[k] = "#{Time.at(fly_out_arr_weather["hourly"][j]["dt"]).utc.to_datetime.hour}h"
-          icon[k] = fly_out_arr_weather["hourly"][j]["weather"][0]["icon"]
-          desc[k] = fly_out_arr_weather["hourly"][j]["weather"][0]["description"]
-          visi[k] = fly_out_arr_weather["hourly"][j]["visibility"]
-          buffer[k] = hour[k], icon[k], desc[k, visi[k]]
+          hour[k] =           "#{Time.at(fly_out_arr_weather["hourly"][j]["dt"]).utc.to_datetime.hour}h"
+          icon[k] =           fly_out_arr_weather["hourly"][j]["weather"][0]["icon"]
+          desc[k] =           fly_out_arr_weather["hourly"][j]["weather"][0]["description"]
+          visi =              fly_out_arr_weather["hourly"][j]["visibility"]
+          visi_score[k] =     get_visibility_score(visi.to_i)
+          temp =              fly_out_arr_weather["hourly"][j]["temp"]
+          dew_point =         fly_out_arr_weather["hourly"][j]["dew_point"]
+          ceiling_score[k] =  get_ceiling_score(temp.to_i, dew_point.to_i)
+          
+          buffer[k] = hour[k], icon[k], desc[k], visi_score[k], ceiling_score[k]
           buffer2.push(buffer[k])
           buffer = []
           k =+ 1
@@ -263,10 +276,16 @@ class TripOutputsController < ApplicationController
         if hourly_arr_weather
           k = 0 
           for j in fly_in_offset1..[fly_in_offset2, 47].min #47 is max index for hourly weather
-            hour[k] = "#{Time.at(fly_in_dep_weather["hourly"][j]["dt"]).utc.to_datetime.hour}h"
-            icon[k] = fly_in_dep_weather["hourly"][j]["weather"][0]["icon"]
-            desc[k] = fly_in_dep_weather["hourly"][j]["weather"][0]["description"]
-            buffer[k] = hour[k], icon[k], desc[k]
+            hour[k] =           "#{Time.at(fly_in_dep_weather["hourly"][j]["dt"]).utc.to_datetime.hour}h"
+            icon[k] =           fly_in_dep_weather["hourly"][j]["weather"][0]["icon"]
+            desc[k] =           fly_in_dep_weather["hourly"][j]["weather"][0]["description"]
+            visi =              fly_in_dep_weather["hourly"][j]["visibility"]
+            visi_score[k] =     get_visibility_score(visi.to_i)
+            temp =              fly_in_dep_weather["hourly"][j]["temp"]
+            dew_point =         fly_in_dep_weather["hourly"][j]["dew_point"]
+            ceiling_score[k] =  get_ceiling_score(temp.to_i, dew_point.to_i)
+            
+            buffer[k] = hour[k], icon[k], desc[k], visi_score[k], ceiling_score[k]
             buffer2.push(buffer[k])
             buffer = []
             k =+ 1
@@ -277,11 +296,13 @@ class TripOutputsController < ApplicationController
           # We clean the buffer array
           buffer2 = []
         else
-          date = Time.at(fly_in_dep_weather["daily"][@day_return_offset]["dt"]).utc.to_datetime
-          day  = "#{date.day}/#{date.month}"
-          icon = fly_in_dep_weather["daily"][@day_return_offset]["weather"][0]["icon"]
-          desc = fly_in_dep_weather["daily"][@day_return_offset]["weather"][0]["description"]
-          buffer.push(day, icon, desc)
+          date =        Time.at(fly_in_dep_weather["daily"][@day_return_offset]["dt"]).utc.to_datetime
+          day  =        "#{date.day}/#{date.month}"
+          icon =        fly_in_dep_weather["daily"][@day_return_offset]["weather"][0]["icon"]
+          desc =        fly_in_dep_weather["daily"][@day_return_offset]["weather"][0]["description"]
+          visi_score =  0
+          
+          buffer.push(day, icon, desc, visi_score)
           buffer2.push(buffer) # to keep data compatibility with hourly weather
           @fly_in_dep.push(buffer2)
           buffer  = []
@@ -296,19 +317,27 @@ class TripOutputsController < ApplicationController
 
       if hourly_arr_weather
         for i in fly_in_offset3..[fly_in_offset4, 47].min #47 is max index for hourly weather
-          hour  = "#{Time.at(fly_in_arr_weather["hourly"][i]["dt"]).utc.to_datetime.hour}h"
-          icon  = fly_in_arr_weather["hourly"][i]["weather"][0]["icon"]
-          desc = fly_in_arr_weather["hourly"][i]["weather"][0]["description"]
-          buffer.push(hour, icon, desc)
+          hour =            "#{Time.at(fly_in_arr_weather["hourly"][i]["dt"]).utc.to_datetime.hour}h"
+          icon =            fly_in_arr_weather["hourly"][i]["weather"][0]["icon"]
+          desc =            fly_in_arr_weather["hourly"][i]["weather"][0]["description"]
+          visi =            fly_in_arr_weather["hourly"][i]["visibility"]
+          visi_score =      get_visibility_score(visi.to_i)
+          temp =            fly_in_arr_weather["hourly"][i]["temp"]
+          dew_point =       fly_in_arr_weather["hourly"][i]["dew_point"]
+          ceiling_score =   get_ceiling_score(temp, dew_point)
+          
+          buffer.push(hour, icon, desc, visi_score, ceiling_score)
           @fly_in_arr.push(buffer)
           buffer = []
         end
       else
-          date = Time.at(fly_in_arr_weather["daily"][@day_return_offset]["dt"]).utc.to_datetime
-          day  = "#{date.day}/#{date.month}"
-          icon = fly_in_arr_weather["daily"][@day_return_offset]["weather"][0]["icon"]
-          desc = fly_in_arr_weather["daily"][@day_return_offset]["weather"][0]["description"]
-          buffer.push(day, icon, desc)
+          date =        Time.at(fly_in_arr_weather["daily"][@day_return_offset]["dt"]).utc.to_datetime
+          day  =        "#{date.day}/#{date.month}"
+          icon =        fly_in_arr_weather["daily"][@day_return_offset]["weather"][0]["icon"]
+          desc =        fly_in_arr_weather["daily"][@day_return_offset]["weather"][0]["description"]
+          visi_score =  0
+          
+          buffer.push(day, icon, desc, visi_score)
           @fly_in_arr.push(buffer)
           buffer = []
       end
@@ -318,7 +347,7 @@ class TripOutputsController < ApplicationController
 
   private
 
-  def validWeatherInDB?(target_id)
+  def valid_weather_in_db?(target_id)
     current_time = DateTime.now
     if OpenweatherCall.find_by(airport_id: target_id).nil?
       return false
@@ -332,7 +361,7 @@ class TripOutputsController < ApplicationController
     end  
   end
 
-  def createWeatherDBEntry(target_id, weather_json)
+  def create_weather_db_entry(target_id, weather_json)
     # We create a new entry in openweather_calls table
     new_entry = OpenweatherCall.new
     new_entry.airport_id = target_id
@@ -340,4 +369,26 @@ class TripOutputsController < ApplicationController
     new_entry.save
   end
 
+  def get_visibility_score(visibility)
+    if visibility <= 5000
+      visi_score = 2
+    elsif visibility > 1500 && visibility <  8000
+      visi_score = 1
+    else
+      visi_score = 0
+    end
+    return visi_score
+  end
+
+  def get_ceiling_score(temp, dew_point)
+    ceiling = ((temp.to_f - dew_point.to_f) * 400).to_i
+    if ceiling < 500
+      ceiling_score = 2
+    elsif ceiling >= 500 && ceiling < 2000
+      ceiling_score = 1
+    else
+      ceiling_score = 0
+    end
+    return ceiling_score
+  end
 end
