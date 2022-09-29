@@ -71,6 +71,20 @@
           <div class="to-as-flight-element">
             <table>
               <tr>
+                <td></td>
+                <% @global_score_out[i].each do |global_score| %>
+                  <td>
+                    <% if global_score == 1 %>
+                      <div class="to-cell-weather-warning"><%= global_score %></div>
+                    <% elsif global_score == 2 %>
+                      <div class="to-cell-weather-danger"><%= global_score %></div>
+                      <% else %>
+                      <div class="to-cell-weather-success"><%= global_score %></div>
+                    <% end %>
+                  </td>
+                <% end %>
+              </tr>
+              <tr>
                 <th></th>
                 <% @fly_out_dep.each do |fly_out_dep| %> 
                   <th><%= fly_out_dep[0] %></th>
@@ -85,16 +99,14 @@
                     <div class="to-cell-content">
                       <img src="http://openweathermap.org/img/wn/<%= fly_out_dep[1] %>.png" alt="weather logo" title="<%= fly_out_dep[2] %>">
                       <% if fly_out_dep[3] == 1 %>
-                        <div class="tag tag-warning">VISI</div>
+                        <div class="tag tag-warning m-5" title="5 km < Visiblity < 8 Km">VISI</div>
                       <% elsif fly_out_dep[3] == 2 %>
-                        <div class="tag tag-danger">VISI</div>
+                        <div class="tag tag-danger mb-5" title="Visibility < 8 Km">VISI</div>
                       <% end %>
                       <% if fly_out_dep[4] == 1 %>
-                        <div class="tag tag-warning">CEIL</div>
+                        <div class="tag tag-warning mb-5" title="500 ft < Ceiling < 2000 ft (Possible)">CEIL</div>
                       <% elsif fly_out_dep[4] == 2 %>
-                        <div class="tag tag-danger">CEIL</div>
-                      <% else %>
-                        <div class="tag tag-success">CEIL</div>
+                        <div class="tag tag-danger mb-5" title="ceiling < 500ft (Possible)">CEIL</div>
                       <% end %>
                     </div>
                   </td>
@@ -115,9 +127,14 @@
                     <div class="to-cell-content">
                       <img src="http://openweathermap.org/img/wn/<%= fly_out_arr[1] %>.png" alt="weather logo" title="<%= fly_out_arr[2] %>">
                       <% if fly_out_arr[3] == 1 %>
-                        <div class="tag tag-warning">VISI</div>
+                        <div class="tag tag-warning mb-5" title="5 km < Visiblity < 8 Km">VISI</div>
                       <% elsif fly_out_arr[3] == 2 %>
-                        <div class="tag tag-danger">VISI</div>
+                        <div class="tag tag-danger mb-5" title="Visibility < 8 Km">VISI</div>
+                      <% end %>
+                      <% if fly_out_arr[4] == 1 %>
+                        <div class="tag tag-warning mb-5" title="500 ft < Ceiling < 2000 ft (Possible)">CEIL</div>
+                      <% elsif fly_out_arr[4] == 2 %>
+                        <div class="tag tag-danger mb-5" title="ceiling < 500ft (Possible)">CEIL</div>
                       <% end %>
                     </div>
                   </td>
@@ -130,6 +147,20 @@
           <div class="to-as-flight-element">
             <table>
               <tr>
+                <td></td>
+                <% @global_score_in[i].each do |global_score| %>
+                  <td>
+                    <% if global_score == 1 %>
+                      <div class="to-cell-weather-warning"><%= global_score %></div>
+                    <% elsif global_score == 2 %>
+                      <div class="to-cell-weather-danger"><%= global_score %></div>
+                      <% else %>
+                      <div class="to-cell-weather-success"><%= global_score %></div>
+                    <% end %>
+                  </td>
+                <% end %>
+              </tr>
+              <tr>
                 <th></th>
                 <% @fly_in_dep[i].each do |fly_in_dep| %> 
                   <th><%= fly_in_dep[0] %></th>
@@ -140,7 +171,21 @@
                   <%= image_tag("icons8-airplane-take-off-64_light.png", style: "height:24px;width:24px") %>
                 </td>
                 <% @fly_in_dep[i].each do |fly_in_dep| %> 
-                  <td><img src="http://openweathermap.org/img/wn/<%= fly_in_dep[1] %>.png" alt="weather logo" title="<%= fly_in_dep[2] %>"></td>
+                  <td>
+                    <div class="to-cell-content">
+                      <img src="http://openweathermap.org/img/wn/<%= fly_in_dep[1] %>.png" alt="weather logo" title="<%= fly_in_dep[2] %>">
+                      <% if fly_in_dep[3] == 1 %>
+                        <div class="tag tag-warning mb-5" title="5 km < Visiblity < 8 Km">VISI</div>
+                      <% elsif fly_in_dep[3] == 2 %>
+                        <div class="tag tag-danger mb-5" title="Visibility < 8 Km">VISI</div>
+                      <% end %>
+                      <% if fly_in_dep[4] == 1 %>
+                        <div class="tag tag-warning mb-5" title="500 ft < Ceiling < 2000 ft (Possible)">CEIL</div>
+                      <% elsif fly_in_dep[4] == 2 %>
+                        <div class="tag tag-danger mb-5" title="ceiling < 500ft (Possible)">CEIL</div>
+                      <% end %>
+                    </div>
+                  </td>
                 <% end %>
               </tr>
 
@@ -155,7 +200,21 @@
                   <%= image_tag("icons8-airplane-landing-64_light.png", style: "height:24px;width:24px") %>
                 </td>
                 <% @fly_in_arr.each do |fly_in_arr| %> 
-                  <td><img src="http://openweathermap.org/img/wn/<%= fly_in_arr[1] %>.png" alt="weather logo" title="<%= fly_in_arr[2] %>"></td>
+                  <td>
+                    <div class="to-cell-content">
+                      <img src="http://openweathermap.org/img/wn/<%= fly_in_arr[1] %>.png" alt="weather logo" title="<%= fly_in_arr[2] %>">
+                      <% if fly_in_arr[3] == 1 %>
+                        <div class="tag tag-warning mb-5" title="5 km < Visiblity < 8 Km">VISI</div>
+                      <% elsif fly_in_arr[3] == 2 %>
+                        <div class="tag tag-danger mb-5" title="Visibility < 8 Km">VISI</div>
+                      <% end %>
+                      <% if fly_in_arr[4] == 1 %>
+                        <div class="tag tag-warning mb-5" title="500 ft < Ceiling < 2000 ft (Possible)">CEIL</div>
+                      <% elsif fly_in_arr[4] == 2 %>
+                        <div class="tag tag-danger mb-5" title="ceiling < 500ft (Possible)">CEIL</div>
+                      <% end %>
+                    </div>
+                  </td>
                 <% end %>
               </tr>
             </table>

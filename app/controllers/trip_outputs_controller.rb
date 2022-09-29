@@ -99,7 +99,7 @@ class TripOutputsController < ApplicationController
       fly_out_dep_weather = JSON.parse(OpenweatherCall.where(airport_id: target_id).last.json)
     else
       # Entry doesn't exist in DB, we proceed to the call
-      api_call = RestClient.get 'https://api.openweathermap.org/data/3.0/onecall', {params: {lat:Airport.find_by(icao: @trip_input.dep_airport_icao).latitude, lon:Airport.find_by(icao: @trip_input.dep_airport_icao).longitude, appid:ENV["OPENWEATHERMAP_API"], exclude: "current, minutely", units: "metric"}}
+      api_call = RestClient.get 'https://api.openweathermap.org/data/3.0/onecall', {params: {lat:Airport.find_by(icao: @trip_input.dep_airport_icao).latitude, lon:Airport.find_by(icao: @trip_input.dep_airport_icao).longitude, appid:ENV["OPENWEATHERMAP_API"], exclude: "minutely", units: "metric"}}
       fly_out_dep_weather = JSON.parse(api_call)
       
       # We create a new entry in openweather_calls table
@@ -118,8 +118,10 @@ class TripOutputsController < ApplicationController
     
     # Variable init
     @fly_out_dep = []
-    @day_departure_offset = 0                       # by default today
-    @day_return_offset    = @trip_input.overnights  # by default the nbr of overnights
+    @day_departure_offset = 0                         # by default today
+    @day_return_offset    = @trip_input.overnights    # by default the nbr of overnights
+    @global_score_out = []                            # Score to give indication of fly out conditions
+    @global_score_in = []                             # Score to give indication of fly in conditions
     buffer = []
    
     # Departure Date exceptions
@@ -167,8 +169,9 @@ class TripOutputsController < ApplicationController
       temp =          fly_out_dep_weather["hourly"][i]["temp"]
       dew_point =     fly_out_dep_weather["hourly"][i]["dew_point"]
       ceiling_score = get_ceiling_score(temp.to_i, dew_point.to_i)
+      partial_score = get_partial_score(visi_score, ceiling_score)
       
-      buffer.push(hour, icon, desc, visi_score, ceiling_score)
+      buffer.push(hour, icon, desc, visi_score, ceiling_score, partial_score)
       @fly_out_dep.push(buffer)
       buffer = []
     end
@@ -195,6 +198,9 @@ class TripOutputsController < ApplicationController
       visi_score = []
       ceiling = []
       ceiling_score = []
+      partial_score = []
+      global_score = []
+      buffer_score = []
       buffer2 = [] 
 
       for i in 0..@filtered_airports.count - 1
@@ -225,17 +231,22 @@ class TripOutputsController < ApplicationController
           temp =              fly_out_arr_weather["hourly"][j]["temp"]
           dew_point =         fly_out_arr_weather["hourly"][j]["dew_point"]
           ceiling_score[k] =  get_ceiling_score(temp.to_i, dew_point.to_i)
+          partial_score[k] =  get_partial_score(visi_score[k], ceiling_score[k])
+          global_score =      get_global_score(@fly_out_dep[k][5], partial_score[k])
           
-          buffer[k] = hour[k], icon[k], desc[k], visi_score[k], ceiling_score[k]
+          buffer[k] = hour[k], icon[k], desc[k], visi_score[k], ceiling_score[k], partial_score[k]
           buffer2.push(buffer[k])
           buffer = []
+          buffer_score.push(global_score)
           k =+ 1
         end
         # We push all weather hours and info for a defined destination airport
         @fly_out_arr.push(buffer2)
+        @global_score_out.push(buffer_score)
         
         # We clean the buffer array
         buffer2 = []
+        buffer_score = []
       end
       
       #------------------------------------------------
@@ -284,8 +295,9 @@ class TripOutputsController < ApplicationController
             temp =              fly_in_dep_weather["hourly"][j]["temp"]
             dew_point =         fly_in_dep_weather["hourly"][j]["dew_point"]
             ceiling_score[k] =  get_ceiling_score(temp.to_i, dew_point.to_i)
+            partial_score[k] =  get_partial_score(visi_score[k], ceiling_score[k])
             
-            buffer[k] = hour[k], icon[k], desc[k], visi_score[k], ceiling_score[k]
+            buffer[k] = hour[k], icon[k], desc[k], visi_score[k], ceiling_score[k], partial_score[k]
             buffer2.push(buffer[k])
             buffer = []
             k =+ 1
@@ -296,13 +308,16 @@ class TripOutputsController < ApplicationController
           # We clean the buffer array
           buffer2 = []
         else
-          date =        Time.at(fly_in_dep_weather["daily"][@day_return_offset]["dt"]).utc.to_datetime
-          day  =        "#{date.day}/#{date.month}"
-          icon =        fly_in_dep_weather["daily"][@day_return_offset]["weather"][0]["icon"]
-          desc =        fly_in_dep_weather["daily"][@day_return_offset]["weather"][0]["description"]
-          visi_score =  0
+          date =          Time.at(fly_in_dep_weather["daily"][@day_return_offset]["dt"]).utc.to_datetime
+          day  =          "#{date.day}/#{date.month}"
+          icon =          fly_in_dep_weather["daily"][@day_return_offset]["weather"][0]["icon"]
+          desc =          fly_in_dep_weather["daily"][@day_return_offset]["weather"][0]["description"]
+          visi_score =    0
+          ceiling_score = 0
+          partial_score = 0
+          global_score =  0
           
-          buffer.push(day, icon, desc, visi_score)
+          buffer.push(day, icon, desc, visi_score, ceiling_score, partial_score)
           buffer2.push(buffer) # to keep data compatibility with hourly weather
           @fly_in_dep.push(buffer2)
           buffer  = []
@@ -313,9 +328,10 @@ class TripOutputsController < ApplicationController
       # -----------------------------------------------------------
       # Arrival weather
       # -----------------------------------------------------------
-      fly_in_arr_weather = fly_out_dep_weather # We retrieve the current know weather from departure airport
+      fly_in_arr_weather = fly_out_dep_weather # We retrieve the current known weather from departure airport
 
       if hourly_arr_weather
+        k = 0
         for i in fly_in_offset3..[fly_in_offset4, 47].min #47 is max index for hourly weather
           hour =            "#{Time.at(fly_in_arr_weather["hourly"][i]["dt"]).utc.to_datetime.hour}h"
           icon =            fly_in_arr_weather["hourly"][i]["weather"][0]["icon"]
@@ -325,24 +341,36 @@ class TripOutputsController < ApplicationController
           temp =            fly_in_arr_weather["hourly"][i]["temp"]
           dew_point =       fly_in_arr_weather["hourly"][i]["dew_point"]
           ceiling_score =   get_ceiling_score(temp, dew_point)
-          
-          buffer.push(hour, icon, desc, visi_score, ceiling_score)
+          partial_score =   get_partial_score(visi_score, ceiling_score)
+
+          buffer.push(hour, icon, desc, visi_score, ceiling_score, partial_score)
           @fly_in_arr.push(buffer)
           buffer = []
+          k += 1
         end
       else
-          date =        Time.at(fly_in_arr_weather["daily"][@day_return_offset]["dt"]).utc.to_datetime
-          day  =        "#{date.day}/#{date.month}"
-          icon =        fly_in_arr_weather["daily"][@day_return_offset]["weather"][0]["icon"]
-          desc =        fly_in_arr_weather["daily"][@day_return_offset]["weather"][0]["description"]
-          visi_score =  0
+          date =          Time.at(fly_in_arr_weather["daily"][@day_return_offset]["dt"]).utc.to_datetime
+          day  =          "#{date.day}/#{date.month}"
+          icon =          fly_in_arr_weather["daily"][@day_return_offset]["weather"][0]["icon"]
+          desc =          fly_in_arr_weather["daily"][@day_return_offset]["weather"][0]["description"]
+          visi_score =    0
+          ceiling_score = 0
+          partial_score = 0
           
-          buffer.push(day, icon, desc, visi_score)
+          buffer.push(day, icon, desc, visi_score, ceiling_score, partial_score)
           @fly_in_arr.push(buffer)
           buffer = []
       end
+      # We compute now the global score for flight in (By Aiport -> hour)
+      for i in 0..@filtered_airports.count - 1
+          for h in 0..@fly_in_arr.count - 1
+            global_score = get_global_score(@fly_in_dep[i][h][5], @fly_in_arr[h][5])
+            buffer.push(global_score)
+          end
+          @global_score_in.push(buffer)
+          buffer = []
+      end
     end    
-    #raise
   end
 
   private
@@ -390,5 +418,32 @@ class TripOutputsController < ApplicationController
       ceiling_score = 0
     end
     return ceiling_score
+  end
+
+  def get_partial_score(visi_score, ceiling_score)
+    # We try here to make a GAFORE like notation, but simplified
+    partial_score = 0
+    if visi_score + ceiling_score == 0
+      partial_score = 0
+    elsif visi_score == 1 || ceiling_score == 1
+      partial_score = 1
+    elsif visi_score == 2 || ceiling_score == 2
+      partial_score = 2
+    end
+    return partial_score
+  end
+
+  def get_global_score(partial_dep_score, partial_arrival_score)
+    # We globalize here departure and arrival partial_score. 
+    # Both departure and arrival should have a score == 0 to proceed.
+    global_score = 0
+    if partial_dep_score == 0 && partial_arrival_score == 0
+      global_score = 0  # Good to go
+    elsif partial_dep_score == 1 || partial_arrival_score == 1
+      global_score = 1  # Marginal weather
+    elsif partial_dep_score == 2 || partial_arrival_score == 2
+      global_score = 2  # No GO
+    end
+    return global_score
   end
 end
