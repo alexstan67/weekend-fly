@@ -9,7 +9,7 @@ class TripOutputsController < ApplicationController
     @errors_label = []
     @errors_label[1] = "Flight back Impossible today with no overnights"
     @errors_label[2] = "No destination airport found"
-    @limit = 10
+    @limit = 3
 
     # We load logged in user last Trip_input data
     @trip_input = TripInput.where(user_id: current_user.id).order(id: :desc).first
@@ -170,7 +170,7 @@ class TripOutputsController < ApplicationController
       dew_point =     fly_out_dep_weather["hourly"][i]["dew_point"]
       ceiling_score = get_ceiling_score(temp.to_i, dew_point.to_i)
       partial_score = get_partial_score(visi_score, ceiling_score)
-      
+
       buffer.push(hour, icon, desc, visi_score, ceiling_score, partial_score)
       @fly_out_dep.push(buffer)
       buffer = []
@@ -232,13 +232,14 @@ class TripOutputsController < ApplicationController
           dew_point =         fly_out_arr_weather["hourly"][j]["dew_point"]
           ceiling_score[k] =  get_ceiling_score(temp.to_i, dew_point.to_i)
           partial_score[k] =  get_partial_score(visi_score[k], ceiling_score[k])
-          global_score =      get_global_score(@fly_out_dep[k][5], partial_score[k])
+          global_score =      get_global_score(@fly_out_dep[k][5].to_i, partial_score[k].to_i)
           
           buffer[k] = hour[k], icon[k], desc[k], visi_score[k], ceiling_score[k], partial_score[k]
           buffer2.push(buffer[k])
+          
           buffer = []
           buffer_score.push(global_score)
-          k =+ 1
+          k += 1
         end
         # We push all weather hours and info for a defined destination airport
         @fly_out_arr.push(buffer2)
@@ -248,7 +249,7 @@ class TripOutputsController < ApplicationController
         buffer2 = []
         buffer_score = []
       end
-      
+
       #------------------------------------------------
       # --- Fly in airport weather
       # -----------------------------------------------
@@ -437,13 +438,10 @@ class TripOutputsController < ApplicationController
     # We globalize here departure and arrival partial_score. 
     # Both departure and arrival should have a score == 0 to proceed.
     global_score = 0
-    if partial_dep_score == 0 && partial_arrival_score == 0
-      global_score = 0  # Good to go
-    elsif partial_dep_score == 1 || partial_arrival_score == 1
-      global_score = 1  # Marginal weather
-    elsif partial_dep_score == 2 || partial_arrival_score == 2
-      global_score = 2  # No GO
-    end
+    global_score = 0 if partial_dep_score == 0 && partial_arrival_score == 0 # Good to go
+    global_score = 1 if partial_dep_score == 1 || partial_arrival_score == 1 # Marginal weather
+    global_score = 2 if partial_dep_score == 2 || partial_arrival_score == 2 # No GO
+    #logger.info "#{partial_dep_score} and #{partial_arrival_score} = #{global_score}"
     return global_score
   end
 end
