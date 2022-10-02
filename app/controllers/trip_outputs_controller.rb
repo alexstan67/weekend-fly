@@ -154,11 +154,11 @@ class TripOutputsController < ApplicationController
       fly_out_offset2 = fly_out_offset1 + @flight_data[:fly_out_sunset_hour] - @flight_data[:fly_out_sunrise_hour] - @trip_input.eet_hour
     end
 
-    # We adjust the flight in date if flight out has now an offset
+    # We adjust the flight-in day if flight out has now an offset
     @flight_data[:day_return_offset] += 1 if @flight_data[:day_departure_offset] == 1
     
     # We load the flight out departure weather
-    @fly_out_dep = get_hourly_airport_weather( fly_out_offset1, fly_out_offset2, fly_out_dep_weather)
+    @fly_out_dep = get_hourly_airport_weather( fly_out_offset1, fly_out_offset2, fly_out_dep_weather )
     
     # ---------------------------------------------
     # --- Fly out arrival airport weather (Landing)
@@ -170,8 +170,7 @@ class TripOutputsController < ApplicationController
         hash = { lat: airport.latitude, lon: airport.longitude, info_window: render_to_string(partial: "info_window", locals: {airport: airport}) }
         @markers << hash
       end
-      # No need to go further and check weather if errors raised
-      
+
       # Variable init
       @fly_out_arr = []
       fly_out_arr_weather = []
@@ -212,14 +211,14 @@ class TripOutputsController < ApplicationController
       #   - daily:  8   days   (more than 1 overnight)
       # We only use weather info stored in db - no API call
       
-      # Variable init
-      @fly_in_dep = []
-      @fly_in_arr = []
-      hourly_arr_weather = true # By defaut, weather is hourly
-      
       # -----------------------------------------------------------
       # Departure weather loading
       # -----------------------------------------------------------
+      
+      # Variable init
+      @fly_in_dep = []
+      hourly_arr_weather = true # By defaut, weather is hourly
+      
       if @flight_data[:day_return_offset] == 0    # today
         fly_in_offset1 = fly_out_offset1 + @trip_input.eet_hour
         fly_in_offset2 = fly_out_offset2 
@@ -254,18 +253,22 @@ class TripOutputsController < ApplicationController
       # -----------------------------------------------------------
       # Arrival weather loading
       # -----------------------------------------------------------
+      
+      # Variable init
+      @fly_in_arr = []
       fly_in_arr_weather = fly_out_dep_weather # We retrieve the current known weather from departure airport
 
       # We load the flight in arrival weather
       if hourly_arr_weather
-        @fly_out_dep = get_hourly_airport_weather( fly_in_offset3, fly_in_offset4, fly_in_arr_weather)
+        @fly_out_dep = get_hourly_airport_weather( fly_in_offset3, fly_in_offset4, fly_in_arr_weather )
       else
         @fly_in_arr = get_daily_airport_weather( fly_in_arr_weather )
       end
 
-      
       # --------------------------------------------------------------------
       # GLOBAL SCORE: Fly Out (By Aiport -> hour)
+      # The global score is a gafor like system that gives an aeronautical indication if the fly
+      # is safe in VFR conditions. See file weather_alerts.png on root directory.
       # --------------------------------------------------------------------
       @global_score_out = [] 
       buffer = []
@@ -380,6 +383,5 @@ class TripOutputsController < ApplicationController
     airport_weather.push(hash)
 
   end
-
 
 end
