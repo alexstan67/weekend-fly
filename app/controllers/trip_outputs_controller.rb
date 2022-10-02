@@ -94,6 +94,7 @@ class TripOutputsController < ApplicationController
     # -------------------------------------------------
     # We fist check that this api call is not currently stored in db for current pair airport_id / hour
     target_id = Airport.find_by(icao: @trip_input.dep_airport_icao).id
+
     if valid_weather_in_db?( target_id )
       # We take the json from the database
       fly_out_dep_weather = JSON.parse( OpenweatherCall.where(airport_id: target_id).last.json )
@@ -110,9 +111,6 @@ class TripOutputsController < ApplicationController
     @fly_out_dep = []
     @flight_data =  {}
     @flight_data[:day_return_offset] = @trip_input.overnights # by default the nbr of overnights
-    @global_score_out = []                                    # Score to give indication of fly out conditions
-    @global_score_in = []                                     # Score to give indication of fly in conditions
-    buffer = []
     
     # First available weather info hour, index 0
     @flight_data[:first_available_hour] = Time.at( fly_out_dep_weather["hourly"][0]["dt"] ).utc.to_datetime.hour
@@ -156,25 +154,11 @@ class TripOutputsController < ApplicationController
       fly_out_offset2 = fly_out_offset1 + @flight_data[:fly_out_sunset_hour] - @flight_data[:fly_out_sunrise_hour] - @trip_input.eet_hour
     end
 
+    # We adjust the flight in date if flight out has now an offset
     @flight_data[:day_return_offset] += 1 if @flight_data[:day_departure_offset] == 1
     
-    @fly_out_dep = load_airport_weather( fly_out_offset1, fly_out_offset2, fly_out_dep_weather)
-    
-    #for i in fly_out_offset1..fly_out_offset2
-    #  visibility =              fly_out_dep_weather["hourly"][i]["visibility"]
-    #  temp =                    fly_out_dep_weather["hourly"][i]["temp"]
-    #  dew_point =               fly_out_dep_weather["hourly"][i]["dew_point"]
-
-    #  hash = {}
-    #  hash[:hour] =             "#{Time.at( fly_out_dep_weather["hourly"][i]["dt"] ).utc.to_datetime.hour}h"
-    #  hash[:icon] =             fly_out_dep_weather["hourly"][i]["weather"][0]["icon"]
-    #  hash[:description] =      fly_out_dep_weather["hourly"][i]["weather"][0]["description"]
-    #  hash[:visibility_score] = get_visibility_score( visibility.to_i ) 
-    #  hash[:ceiling_score] =    get_ceiling_score( temp.to_i, dew_point.to_i )
-    #  hash[:partial_score] =    [ hash[:visibility_score], hash[:ceiling_score] ].max
-
-    #  @fly_out_dep.push(hash)
-    #end
+    # We load the flight out departure weather
+    @fly_out_dep = get_hourly_airport_weather( fly_out_offset1, fly_out_offset2, fly_out_dep_weather)
     
     # ---------------------------------------------
     # --- Fly out arrival airport weather (Landing)
@@ -191,21 +175,11 @@ class TripOutputsController < ApplicationController
       # Variable init
       @fly_out_arr = []
       fly_out_arr_weather = []
-      icon = []
-      hour = []
-      desc = []
-      visi = []
-      visi_score = []
-      ceiling = []
-      ceiling_score = []
-      partial_score = []
-      global_score = []
-      buffer_score = []
-      buffer2 = [] 
 
       for i in 0..@filtered_airports.count - 1
         # We fist check that this api call is not currently stored in db for current pair airport_id / hour
         target_id = @filtered_airports[i].id
+
         if valid_weather_in_db?(target_id)
           # We take the json from the database
           fly_out_arr_weather = JSON.parse(OpenweatherCall.where(airport_id: target_id).last.json)
@@ -218,36 +192,15 @@ class TripOutputsController < ApplicationController
           create_weather_db_entry(target_id, api_call)
         end
 
-        k = 0
-        #TODO: Second offset needs to be checked if we fly on last possible departure hour
         fly_out_offset3 = fly_out_offset1 + @trip_input.eet_hour
         fly_out_offset4 = fly_out_offset2 + @trip_input.eet_hour
-        for j in fly_out_offset3..fly_out_offset4
-          hour[k] =           "#{Time.at(fly_out_arr_weather["hourly"][j]["dt"]).utc.to_datetime.hour}h"
-          icon[k] =           fly_out_arr_weather["hourly"][j]["weather"][0]["icon"]
-          desc[k] =           fly_out_arr_weather["hourly"][j]["weather"][0]["description"]
-          visi =              fly_out_arr_weather["hourly"][j]["visibility"]
-          visi_score[k] =     get_visibility_score(visi.to_i)
-          temp =              fly_out_arr_weather["hourly"][j]["temp"]
-          dew_point =         fly_out_arr_weather["hourly"][j]["dew_point"]
-          ceiling_score[k] =  get_ceiling_score(temp.to_i, dew_point.to_i)
-          partial_score[k] =  [ visi_score[k], ceiling_score[k] ].max
-          global_score =      [ @fly_out_dep[k][:partial_score], partial_score[k] ].max
-          
-          buffer[k] = hour[k], icon[k], desc[k], visi_score[k], ceiling_score[k], partial_score[k]
-          buffer2.push(buffer[k])
-          
-          buffer = []
-          buffer_score.push(global_score)
-          k += 1
-        end
-        # We push all weather hours and info for a defined destination airport
-        @fly_out_arr.push(buffer2)
-        @global_score_out.push(buffer_score)
         
-        # We clean the buffer array
-        buffer2 = []
-        buffer_score = []
+        data = []
+        data = get_hourly_airport_weather( fly_out_offset3, fly_out_offset4, fly_out_arr_weather)
+        
+        # We push all weather hours and info for a defined destination airport
+        @fly_out_arr.push(data)
+        
       end
 
       #------------------------------------------------
@@ -265,7 +218,7 @@ class TripOutputsController < ApplicationController
       hourly_arr_weather = true # By defaut, weather is hourly
       
       # -----------------------------------------------------------
-      # Departure weather
+      # Departure weather loading
       # -----------------------------------------------------------
       if @flight_data[:day_return_offset] == 0    # today
         fly_in_offset1 = fly_out_offset1 + @trip_input.eet_hour
@@ -286,91 +239,57 @@ class TripOutputsController < ApplicationController
         fly_in_dep_weather = JSON.parse(OpenweatherCall.where(airport_id: @filtered_airports[i].id).last.json)
         
         if hourly_arr_weather
-          k = 0 
-          for j in fly_in_offset1..[fly_in_offset2, 47].min #47 is max index for hourly weather
-            hour[k] =           "#{Time.at(fly_in_dep_weather["hourly"][j]["dt"]).utc.to_datetime.hour}h"
-            icon[k] =           fly_in_dep_weather["hourly"][j]["weather"][0]["icon"]
-            desc[k] =           fly_in_dep_weather["hourly"][j]["weather"][0]["description"]
-            visi =              fly_in_dep_weather["hourly"][j]["visibility"]
-            visi_score[k] =     get_visibility_score(visi.to_i)
-            temp =              fly_in_dep_weather["hourly"][j]["temp"]
-            dew_point =         fly_in_dep_weather["hourly"][j]["dew_point"]
-            ceiling_score[k] =  get_ceiling_score(temp.to_i, dew_point.to_i)
-            partial_score[k] =  [ visi_score[k], ceiling_score[k] ].max
-            
-            buffer[k] = hour[k], icon[k], desc[k], visi_score[k], ceiling_score[k], partial_score[k]
-            buffer2.push(buffer[k])
-            buffer = []
-            k =+ 1
-          end
+          data = []
+          data = get_hourly_airport_weather( fly_in_offset2, fly_in_offset3, fly_in_dep_weather)
+
           # We push all weather hours and info for a defined destination airport
-          @fly_in_dep.push(buffer2)
-          
-          # We clean the buffer array
-          buffer2 = []
+          @fly_in_dep.push(data)
         else
-          date =          Time.at(fly_in_dep_weather["daily"][@flight_data[:day_return_offset]]["dt"]).utc.to_datetime
-          day  =          "#{date.day}/#{date.month}"
-          icon =          fly_in_dep_weather["daily"][@flight_data[:day_return_offset]]["weather"][0]["icon"]
-          desc =          fly_in_dep_weather["daily"][@flight_data[:day_return_offset]]["weather"][0]["description"]
-          visi_score =    0
-          ceiling_score = 0
-          partial_score = 0
-          global_score =  0
-          
-          buffer.push(day, icon, desc, visi_score, ceiling_score, partial_score)
-          buffer2.push(buffer) # to keep data compatibility with hourly weather
-          @fly_in_dep.push(buffer2)
-          buffer  = []
-          buffer2 = []
+          data = []
+          data = get_daily_airport_weather( fly_in_dep_weather )
+          @fly_in_dep.push(data)
         end
       end
 
       # -----------------------------------------------------------
-      # Arrival weather
+      # Arrival weather loading
       # -----------------------------------------------------------
       fly_in_arr_weather = fly_out_dep_weather # We retrieve the current known weather from departure airport
 
+      # We load the flight in arrival weather
       if hourly_arr_weather
-        for i in fly_in_offset3..[ fly_in_offset4, 47 ].min # 47 is max index for hourly weather
-          visibility =            fly_in_arr_weather["hourly"][i]["visibility"]
-          temp =                  fly_in_arr_weather["hourly"][i]["temp"]
-          dew_point =             fly_in_arr_weather["hourly"][i]["dew_point"]
-
-          hash = {}
-          hash[:hour] =           "#{Time.at(fly_in_arr_weather["hourly"][i]["dt"]).utc.to_datetime.hour}h"
-          hash[:icon] =           fly_in_arr_weather["hourly"][i]["weather"][0]["icon"]
-          hash[:description] =    fly_in_arr_weather["hourly"][i]["weather"][0]["description"]
-          hash[:visi_score] =     get_visibility_score( visibility.to_i )
-          hash[:ceiling_score] =  get_ceiling_score( temp, dew_point )
-          hash[:partial_score] =  [ hash[:visi_score], hash[:ceiling_score] ].max
-
-          @fly_in_arr.push(hash)
-        end
+        @fly_out_dep = get_hourly_airport_weather( fly_in_offset3, fly_in_offset4, fly_in_arr_weather)
       else
-          
-          hash = {}
-          hash[:date] =           Time.at( fly_in_arr_weather["daily"][@flight_data[:day_return_offset]]["dt"] ).utc.to_datetime
-          hash[:day]  =           "#{hash[:date].day}/#{hash[:date].month}"
-          hash[:icon] =           fly_in_arr_weather["daily"][@flight_data[:day_return_offset]]["weather"][0]["icon"]
-          hash[:description] =    fly_in_arr_weather["daily"][@flight_data[:day_return_offset]]["weather"][0]["description"]
-          hash[:visi_score] =     0
-          hash[:ceiling_score] =  0
-          hash[:partial_score] =  0
-          
-          @fly_in_arr.push(hash)
+        @fly_in_arr = get_daily_airport_weather( fly_in_arr_weather )
       end
 
-      #raise
-
-      # We compute now the global score for flight in (By Aiport -> hour)
+      
+      # --------------------------------------------------------------------
+      # GLOBAL SCORE: Fly Out (By Aiport -> hour)
+      # --------------------------------------------------------------------
+      @global_score_out = [] 
+      buffer = []
       for i in 0..@filtered_airports.count - 1
-          for h in 0..@fly_in_arr.count - 1
-            global_score = [ @fly_in_dep[i][h][5], @fly_in_arr[h][:partial_score] ].max
-            buffer.push(global_score)
-          end
-          @global_score_in.push(buffer)
-          buffer = []
+        for h in 0..@fly_out_dep.count - 1
+          global_score = [ @fly_out_arr[i][h][:partial_score], @fly_out_dep[h][:partial_score] ].max
+          buffer.push(global_score)
+        end
+        @global_score_out.push(buffer)
+        buffer = []
+      end
+
+      # --------------------------------------------------------------------
+      # GLOBAL SCORE: Fly In (By Aiport -> hour)
+      # --------------------------------------------------------------------
+      @global_score_in = []
+      buffer = []
+      for i in 0..@filtered_airports.count - 1
+        for h in 0..@fly_in_arr.count - 1
+          global_score = [ @fly_in_dep[i][h][:partial_score], @fly_in_arr[h][:partial_score] ].max
+          buffer.push(global_score)
+        end
+        @global_score_in.push(buffer)
+        buffer = []
       end
     end    
   end
@@ -423,17 +342,17 @@ class TripOutputsController < ApplicationController
     return ceiling_score
   end
 
-  def load_airport_weather(offset1, offset2, hourly_weather)
+  def get_hourly_airport_weather(offset1, offset2, weather_json)
     airport_weather = []
     for i in offset1..offset2
-      visibility =              hourly_weather["hourly"][i]["visibility"]
-      temp =                    hourly_weather["hourly"][i]["temp"]
-      dew_point =               hourly_weather["hourly"][i]["dew_point"]
+      visibility =              weather_json["hourly"][i]["visibility"]
+      temp =                    weather_json["hourly"][i]["temp"]
+      dew_point =               weather_json["hourly"][i]["dew_point"]
 
       hash = {}
-      hash[:hour] =             "#{Time.at( hourly_weather["hourly"][i]["dt"] ).utc.to_datetime.hour}h"
-      hash[:icon] =             hourly_weather["hourly"][i]["weather"][0]["icon"]
-      hash[:description] =      hourly_weather["hourly"][i]["weather"][0]["description"]
+      hash[:time_unit] =        "#{Time.at( weather_json["hourly"][i]["dt"] ).utc.to_datetime.hour}h"
+      hash[:icon] =             weather_json["hourly"][i]["weather"][0]["icon"]
+      hash[:description] =      weather_json["hourly"][i]["weather"][0]["description"]
       hash[:visibility_score] = get_visibility_score( visibility.to_i ) 
       hash[:ceiling_score] =    get_ceiling_score( temp.to_i, dew_point.to_i )
       hash[:partial_score] =    [ hash[:visibility_score], hash[:ceiling_score] ].max
@@ -444,5 +363,23 @@ class TripOutputsController < ApplicationController
 
     return airport_weather
   end
+
+  def get_daily_airport_weather(weather_json)
+    airport_weather = []
+
+    hash = {}
+
+    hash[:date] =           Time.at( weather_json["daily"][@flight_data[:day_return_offset]]["dt"] ).utc.to_datetime
+    hash[:time_unit] =      "#{hash[:date].day}/#{hash[:date].month}"
+    hash[:icon] =           weather_json["daily"][@flight_data[:day_return_offset]]["weather"][0]["icon"]
+    hash[:description] =    weather_json["daily"][@flight_data[:day_return_offset]]["weather"][0]["description"]
+    hash[:visi_score] =     0
+    hash[:ceiling_score] =  0
+    hash[:partial_score] =  9 # Info not available for daily json
+
+    airport_weather.push(hash)
+
+  end
+
 
 end
