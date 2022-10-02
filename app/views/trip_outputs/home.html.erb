@@ -12,10 +12,10 @@
       <%= "#{@trip_input.distance}#{@trip_input.distance_unit} (with 10% margin) | #{pluralize(@trip_input.eet_hour, "hour")} flight" %>
 
       <h3>Departure Day</h3>
-      <%= format_travel_day(@day_departure_offset) %>
+      <%= format_travel_day( @flight_data[:day_departure_offset].to_i ) %>
 
       <h3>Return Day</h3>
-      <%= "#{format_travel_day(@day_return_offset)} (#{pluralize(@trip_input.overnights, "overnight")})" %>
+      <%= "#{format_travel_day( @flight_data[:day_return_offset].to_i )} (#{pluralize( @trip_input.overnights, "overnight" )})" %>
       
       <h3>Filters</h3>
       <% if @trip_input.small_airport %>
@@ -87,7 +87,7 @@
               <tr>
                 <th></th>
                 <% @fly_out_dep.each do |fly_out_dep| %> 
-                  <th><%= fly_out_dep[0] %></th>
+                  <th><%= fly_out_dep[:hour] %></th>
                 <% end %>
               </tr>
               <tr>
@@ -97,15 +97,15 @@
                 <% @fly_out_dep.each do |fly_out_dep| %> 
                   <td>
                     <div class="to-cell-content">
-                      <img src="http://openweathermap.org/img/wn/<%= fly_out_dep[1] %>.png" alt="weather logo" title="<%= fly_out_dep[2] %>">
-                      <% if fly_out_dep[3] == 1 %>
+                      <img src="http://openweathermap.org/img/wn/<%= fly_out_dep[:icon] %>.png" alt="weather logo" title="<%= fly_out_dep[:description] %>">
+                      <% if fly_out_dep[:visibility_score] == 1 %>
                         <div class="tag tag-warning m-5" title="5 km < Visiblity < 8 Km">VISI</div>
-                      <% elsif fly_out_dep[3] == 2 %>
+                      <% elsif fly_out_dep[:visibility_score] == 2 %>
                         <div class="tag tag-danger mb-5" title="Visibility < 8 Km">VISI</div>
                       <% end %>
-                      <% if fly_out_dep[4] == 1 %>
+                      <% if fly_out_dep[:ceiling_score] == 1 %>
                         <div class="tag tag-warning mb-5" title="500 ft < Ceiling < 2000 ft (Possible)">CEIL</div>
-                      <% elsif fly_out_dep[4] == 2 %>
+                      <% elsif fly_out_dep[:ceiling_score] == 2 %>
                         <div class="tag tag-danger mb-5" title="ceiling < 500ft (Possible)">CEIL</div>
                       <% end %>
                     </div>
@@ -192,7 +192,7 @@
               <tr>
                 <th></th>
                 <% @fly_in_arr.each do |fly_in_arr| %> 
-                  <th><%= fly_in_arr[0] %></th>
+                  <th><%= fly_in_arr[:hour] %></th>
                 <% end %>
               </tr>
               <tr>
@@ -202,15 +202,15 @@
                 <% @fly_in_arr.each do |fly_in_arr| %> 
                   <td>
                     <div class="to-cell-content">
-                      <img src="http://openweathermap.org/img/wn/<%= fly_in_arr[1] %>.png" alt="weather logo" title="<%= fly_in_arr[2] %>">
-                      <% if fly_in_arr[3] == 1 %>
+                      <img src="http://openweathermap.org/img/wn/<%= fly_in_arr[:icon] %>.png" alt="weather logo" title="<%= fly_in_arr[:description] %>">
+                      <% if fly_in_arr[:visi_score] == 1 %>
                         <div class="tag tag-warning mb-5" title="5 km < Visiblity < 8 Km">VISI</div>
-                      <% elsif fly_in_arr[3] == 2 %>
+                      <% elsif fly_in_arr[:visi_score] == 2 %>
                         <div class="tag tag-danger mb-5" title="Visibility < 8 Km">VISI</div>
                       <% end %>
-                      <% if fly_in_arr[4] == 1 %>
+                      <% if fly_in_arr[:ceiling_score] == 1 %>
                         <div class="tag tag-warning mb-5" title="500 ft < Ceiling < 2000 ft (Possible)">CEIL</div>
-                      <% elsif fly_in_arr[4] == 2 %>
+                      <% elsif fly_in_arr[:ceiling_score] == 2 %>
                         <div class="tag tag-danger mb-5" title="ceiling < 500ft (Possible)">CEIL</div>
                       <% end %>
                     </div>

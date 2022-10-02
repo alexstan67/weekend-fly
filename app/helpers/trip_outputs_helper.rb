@@ -8,13 +8,13 @@ module TripOutputsHelper
   end
 
   def format_travel_day(day_offset)
-    if day_offset == 0
-      return "Today"
-    elsif day_offset == 1
-      return "Tomorrow"
+    case day_offset
+    when 0
+      "Today"
+    when 1
+      "Tomorrow"
     else
-      return "in #{pluralize(day_offset, "day")}"
-      raise
+      "in #{pluralize(day_offset, "day")}"
     end 
   end
 end
