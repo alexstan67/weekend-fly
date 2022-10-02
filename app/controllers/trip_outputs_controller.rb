@@ -158,21 +158,23 @@ class TripOutputsController < ApplicationController
 
     @flight_data[:day_return_offset] += 1 if @flight_data[:day_departure_offset] == 1
     
-    for i in fly_out_offset1..fly_out_offset2
-      visibility =              fly_out_dep_weather["hourly"][i]["visibility"]
-      temp =                    fly_out_dep_weather["hourly"][i]["temp"]
-      dew_point =               fly_out_dep_weather["hourly"][i]["dew_point"]
+    @fly_out_dep = load_airport_weather( fly_out_offset1, fly_out_offset2, fly_out_dep_weather)
+    
+    #for i in fly_out_offset1..fly_out_offset2
+    #  visibility =              fly_out_dep_weather["hourly"][i]["visibility"]
+    #  temp =                    fly_out_dep_weather["hourly"][i]["temp"]
+    #  dew_point =               fly_out_dep_weather["hourly"][i]["dew_point"]
 
-      hash = {}
-      hash[:hour] =             "#{Time.at( fly_out_dep_weather["hourly"][i]["dt"] ).utc.to_datetime.hour}h"
-      hash[:icon] =             fly_out_dep_weather["hourly"][i]["weather"][0]["icon"]
-      hash[:description] =      fly_out_dep_weather["hourly"][i]["weather"][0]["description"]
-      hash[:visibility_score] = get_visibility_score( visibility.to_i ) 
-      hash[:ceiling_score] =    get_ceiling_score( temp.to_i, dew_point.to_i )
-      hash[:partial_score] =    [ hash[:visibility_score], hash[:ceiling_score] ].max
+    #  hash = {}
+    #  hash[:hour] =             "#{Time.at( fly_out_dep_weather["hourly"][i]["dt"] ).utc.to_datetime.hour}h"
+    #  hash[:icon] =             fly_out_dep_weather["hourly"][i]["weather"][0]["icon"]
+    #  hash[:description] =      fly_out_dep_weather["hourly"][i]["weather"][0]["description"]
+    #  hash[:visibility_score] = get_visibility_score( visibility.to_i ) 
+    #  hash[:ceiling_score] =    get_ceiling_score( temp.to_i, dew_point.to_i )
+    #  hash[:partial_score] =    [ hash[:visibility_score], hash[:ceiling_score] ].max
 
-      @fly_out_dep.push(hash)
-    end
+    #  @fly_out_dep.push(hash)
+    #end
     
     # ---------------------------------------------
     # --- Fly out arrival airport weather (Landing)
@@ -419,6 +421,28 @@ class TripOutputsController < ApplicationController
     end
 
     return ceiling_score
+  end
+
+  def load_airport_weather(offset1, offset2, hourly_weather)
+    airport_weather = []
+    for i in offset1..offset2
+      visibility =              hourly_weather["hourly"][i]["visibility"]
+      temp =                    hourly_weather["hourly"][i]["temp"]
+      dew_point =               hourly_weather["hourly"][i]["dew_point"]
+
+      hash = {}
+      hash[:hour] =             "#{Time.at( hourly_weather["hourly"][i]["dt"] ).utc.to_datetime.hour}h"
+      hash[:icon] =             hourly_weather["hourly"][i]["weather"][0]["icon"]
+      hash[:description] =      hourly_weather["hourly"][i]["weather"][0]["description"]
+      hash[:visibility_score] = get_visibility_score( visibility.to_i ) 
+      hash[:ceiling_score] =    get_ceiling_score( temp.to_i, dew_point.to_i )
+      hash[:partial_score] =    [ hash[:visibility_score], hash[:ceiling_score] ].max
+
+      airport_weather.push(hash)
+
+    end
+
+    return airport_weather
   end
 
 end
