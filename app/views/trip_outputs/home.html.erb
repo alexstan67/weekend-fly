@@ -146,24 +146,20 @@
           <h3>Ingoing Weather</h3>
           <div class="to-as-flight-element">
             <table>
-              <% @global_score_in[i].each do |global_score| %>
-                <% if global_score == 0 %>
-                  <tr>
-                    <td></td>
+              <tr>
+                <td></td>
+                <% @global_score_in[i].each do |global_score| %>
+                  <% if global_score == 0 %>
                     <td><div class="to-cell-weather-success"><%= global_score %></div></td>
-                  </tr>
                   <% elsif global_score == 1 %>
-                  <tr>
-                    <td></td>
                     <td><div class="to-cell-weather-warning"><%= global_score %></div></td>
-                  </tr>
                   <% elsif global_score == 2 %>
-                  <tr>
-                    <td></td>
                     <td><div class="to-cell-weather-danger"><%= global_score %></div></td>
+                  <% else %>
+                    <td>NA</td>
                   <% end %>
-                  </tr>
-              <% end %>
+                <% end %>
+              </tr>
               <tr>
                 <th></th>
                 <% @fly_in_dep[i].each do |fly_in_dep| %> 
@@ -192,7 +188,6 @@
                   </td>
                 <% end %>
               </tr>
-
               <tr>
                 <th></th>
                 <% @fly_in_arr.each do |fly_in_arr| %> 
