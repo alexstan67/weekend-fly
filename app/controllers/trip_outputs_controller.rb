@@ -239,15 +239,16 @@ class TripOutputsController < ApplicationController
         
         if hourly_arr_weather
           data = []
-          data = get_hourly_airport_weather( fly_in_offset2, fly_in_offset3, fly_in_dep_weather)
-
+          data = get_hourly_airport_weather( fly_in_offset1, fly_in_offset2, fly_in_dep_weather)
           # We push all weather hours and info for a defined destination airport
-          @fly_in_dep.push(data)
+          #@fly_in_dep.push(data)
         else
           data = []
           data = get_daily_airport_weather( fly_in_dep_weather )
-          @fly_in_dep.push(data)
+          #@fly_in_dep.push(data)
         end
+        @fly_in_dep.push(data)
+        logger.info @fly_in_dep
       end
 
       # -----------------------------------------------------------
@@ -260,7 +261,7 @@ class TripOutputsController < ApplicationController
 
       # We load the flight in arrival weather
       if hourly_arr_weather
-        @fly_out_dep = get_hourly_airport_weather( fly_in_offset3, fly_in_offset4, fly_in_arr_weather )
+        @fly_in_arr = get_hourly_airport_weather( fly_in_offset3, fly_in_offset4, fly_in_arr_weather )
       else
         @fly_in_arr = get_daily_airport_weather( fly_in_arr_weather )
       end
@@ -363,7 +364,7 @@ class TripOutputsController < ApplicationController
       airport_weather.push(hash)
 
     end
-
+    
     return airport_weather
   end
 
