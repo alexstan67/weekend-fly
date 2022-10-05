@@ -1,56 +1,43 @@
 <nav class="navbar-container nb-dark">
   <div class="navbar-left">
-      <%= link_to root_path do %>
-        <%= image_tag("icon_plane_light.png", alt: "Weekend-fly logo", class: "avatar-medium") %>
-      <% end %>
+    <%= link_to root_path do %>
+      <%= image_tag("icon_plane_light.png", alt: "Weekend-fly logo", class: "avatar-medium") %>
+    <% end %>
+    <% if user_signed_in? %>
+      <span class="text-light">Welcome <%= current_user.first_name %></span>
+    <% end %>  
+    <div data-controller="clock">
       <% if user_signed_in? %>
-        <span class="text-light">Welcome <%= current_user.first_name %></span>
-      <% end %>  
-      <div data-controller="clock">
-        <% if user_signed_in? %>
-          <div style="font-size: 12px">
-          <span data-clock-target="output" class="text-color-info ml-10"></span>
-          </div>
-        <% end %>  
-      </div>
-    <!--
-    <ul class="nav">
-      <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="#">Active</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link disabled">Disabled</a>
-      </li>
-      <li class="nav-item">
-        <div class="dropdown">
-          <p class="dropbtn">Menu 1 ▼</p>
-          <div class="dropdown-content">
-            <a href="#">Link 1</a>
-            <a href="#">Link 2</a>
-            <div class="dropdown-divider"></div>
-            <a href="#">Link 3</a>
-          </div>
+        <div style="font-size: 12px">
+        <span data-clock-target="output" class="text-color-info ml-10"></span>
         </div>
-      </li>
-    </ul>
-    -->  
+      <% end %>  
+    </div>
   </div>
   <div class="navbar-right">
-    <% if user_signed_in? %>
-      <% if !TripInput.find_by(user_id: current_user.id).nil? %>
-        <%= link_to "Last Trip", trip_outputs_home_path, class:"btn btn-success" %>
+    <div class="navbar-right-buttons">
+      <% if user_signed_in? %>
+        <% if !TripInput.find_by(user_id: current_user.id).nil? %>
+          <%= link_to "Last Trip", trip_outputs_home_path, class:"btn btn-success" %>
+        <% end %>
+        <%= link_to "Account", edit_user_registration_path, class:"btn btn-secondary" %>
+        <%= link_to "Sign Out", destroy_user_session_path, data: {turbo_method: :delete}, class:"btn btn-secondary" %>
+      <% else %>  
+        <%= link_to "Sign In", new_user_session_path, class:"btn btn-secondary" %>
+        <%= link_to "Sign Up", new_user_registration_path, class:"btn btn-primary" %>
       <% end %>
-      <%= link_to "Account", edit_user_registration_path, class:"btn btn-secondary" %>
-      <%= link_to "Sign Out", destroy_user_session_path, data: {turbo_method: :delete}, class:"btn btn-secondary" %>
-    <% else %>  
-      <%= link_to "Sign In", new_user_session_path, class:"btn btn-secondary" %>
-      <%= link_to "Sign Up", new_user_registration_path, class:"btn btn-primary" %>
-    <% end %>
+    </div>
+    <div class="dropdown">
+      <button class="dropbtn btn-burger-light ml-5 mr-5">
+        <img src="assets/burger-light.svg">
+      </button>
+      <div class="dropdown-content dropdown-list-right">
+        <%= link_to "Last Trip", trip_outputs_home_path, class:"btn btn-success" %>
+        <a href="#">Link 1</a>
+        <a href="#">Link 2</a>
+        <div class="dropdown-divider"></div>
+        <a href="#">Link 3</a>
+      </div>
+    </div>
   </div>
 </nav>

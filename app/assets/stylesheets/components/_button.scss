@@ -103,3 +103,13 @@
   transition: 0.25s;
   cursor: pointer;
 }
+.btn-burger-light {
+  background-color: var(--dark);
+  border: solid 0px;
+  padding: 0px;
+}
+.btn-burger-dark {
+  background-color: var(--light);
+  border: solid 0px;
+  padding: 0px;
+}
