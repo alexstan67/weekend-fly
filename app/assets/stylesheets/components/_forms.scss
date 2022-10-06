@@ -1,14 +1,17 @@
 .forms-container {
-  width: fit-content;
-  margin: 20px;
-  padding: 10px;
+  margin: 0px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-radius: $border-radius;
-  box-shadow: $box-shadow $box-shadow $box-shadow;
 }
-
+@media only screen and (min-width: 450px) {
+  .forms-container {
+    width: fit-content;
+    margin: 10px auto;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow $box-shadow $box-shadow;
+  }
+}
 .forms-light {
   background-color: $light;
   border: 1px solid $secondary;
@@ -34,7 +37,6 @@
 
 .forms-dark {
   background-color: $dark;
-  border: 1px solid $secondary;
   h2 {
     color: $light;
   }
