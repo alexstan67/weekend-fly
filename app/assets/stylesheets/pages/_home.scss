@@ -1,16 +1,15 @@
 .home-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   height: calc(100vh - 64px);
+  background-color: white;
 }
 .home-container-text {
-  padding-left: 20px;
   display: flex;
   justify-content: center;
   flex-direction: column;
-  background-color: $light;
-  width: 80vw;
-  height: 100%;
+  align-items: center;
+  min-height: 50%;
 }
 .home-container-text-title {
   h1 {
@@ -22,6 +21,7 @@
   h2 {
     color: $color1;
     font-weight: 400;
+    text-align: center;
   }
   em {
     color: $primary;
@@ -30,20 +30,28 @@
   }
 }
 .home-container-image {
-  width: 100%;
+  height: 100%;
   background-image: url("william-topa-7_4bU5tHRLQ-unsplash.jpg");
   background-repeat: no-repeat;
   background-position: center;
-  background-attachment: fixed;
   background-size: cover;
 }
+@media only screen and (min-width: 700px) {
+  .home-container {
+    flex-direction: row;
+  }
+  .home-container-image {
+    width: 100%;
+    background-attachment: fixed;
+  }
+}
 .home-article {
-  height: calc((100vh / 2) - 40px);
-  background-color: $light;
+  padding: 10px 0px;
   h1 {
+    font-size: 2.5em;
     color: $dark;
+    font-weight: 900;
     text-align: center;
-    font-weight: 200;
   }
   h2 {
     color: $dark;
@@ -58,6 +66,7 @@
 }
 .home-article-container {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-around;
 }
 .home-article-container-element {
@@ -69,6 +78,12 @@
   h3 {
     color: $dark;
   }
+}
+.home-article-container-element:hover {
+  border: solid 1px $dark;
+  border-radius: $border-radius;
+  transition: 0.5s;
+  transform: rotate(360deg);
 }
 .home-article-container-element-logo {
   margin-top: 20px;
@@ -84,17 +99,38 @@
 }
 footer {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   height: 80px;
   color: $light;
   background-color: $color1;
+  justify-content: center;
+}
+.footer-left {
+  display: none;
+}
+.footer-center {
+  display: none; 
 }
 .footer-right {
   text-align: right;
+  text-align: center;
 }
 .email {
   text-decoration: none;
   text-decoration: underline;
   color: $light;
+}
+@media only screen and (min-width: 700px) {
+  footer {
+    display: flex;
+    justify-content: space-between;
+  }
+  .footer-left {
+    display: block;
+  }
+  .footer-center {
+    display: block;
+  }
 }
