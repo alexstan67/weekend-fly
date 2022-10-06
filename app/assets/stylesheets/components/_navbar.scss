@@ -1,14 +1,25 @@
 .navbar-container {
   height: 64px;
-  width: auto;
-  padding: 0px 24px;
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 .navbar-left {
   display: flex;
+  flex-direction: row;
   align-items: center;
+}
+.navbar-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.navbar-right-buttons {
+  display: none;
+}
+.navbar-welcome {
+  font-size: 0.75em;
 }
 .nb-light {
   background-color: $light;
@@ -17,12 +28,12 @@
 .nb-dark {
   background-color: $dark;
 }
-.sticky {
-  position: fixed;
-  top: 0;
-  width: 100%;
+@media only screen and (min-width: 450px)
+{
+  .navbar-right-buttons {
+    display: block;
+  }
+  .navbar-welcome {
+    font-size: 1em;
+  }
 }
-.sticky + .container {
-  padding-top: 60px;
-}
-
