@@ -1,16 +1,15 @@
 .home-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   height: calc(100vh - 64px);
+  background-color: yellow;
 }
 .home-container-text {
-  padding-left: 20px;
   display: flex;
   justify-content: center;
   flex-direction: column;
-  background-color: $light;
-  width: 80vw;
-  height: 100%;
+  align-items: center;
+  min-height: 50%;
 }
 .home-container-text-title {
   h1 {
@@ -22,6 +21,7 @@
   h2 {
     color: $color1;
     font-weight: 400;
+    text-align: center;
   }
   em {
     color: $primary;
@@ -30,12 +30,20 @@
   }
 }
 .home-container-image {
-  width: 100%;
+  height: 100%;
   background-image: url("william-topa-7_4bU5tHRLQ-unsplash.jpg");
   background-repeat: no-repeat;
   background-position: center;
-  background-attachment: fixed;
   background-size: cover;
+}
+@media only screen and (min-width: 700px) {
+  .home-container {
+    flex-direction: row;
+  }
+  .home-container-image {
+    width: 100%;
+    background-attachment: fixed;
+  }
 }
 .home-article {
   height: calc((100vh / 2) - 40px);
