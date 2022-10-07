@@ -1,4 +1,4 @@
-<%= form_with model: @trip_input, data: { turbo: false } do |f| %>
+<%= form_with model: @trip_input, data: { turbo: false }, class: "d-flex flex-column" do |f| %>
   <% if trip_input.errors.any? %>
     <div class="alert-danger">
       <p><%= pluralize(trip_input.errors.count, "error") %> prohibited trip information from being processed:</p>
@@ -9,51 +9,52 @@
       </ul>
     </div>
   <% end %>
-  <table>
-    <tr>
-      <td><%= f.label :dep_airport_icao, "Departure Airport" %></td>
-      <td><%= f.collection_select :dep_airport_icao, Airport.order(:name), :icao, :name %></td>
-    </tr>
-    <tr>
-      <td><%= f.label :eet_hour, "Estimated Enroute Time (hours)" %></td>
-      <td><%= f.number_field :eet_hour %></td>
-    </tr>
-    <tr>
-      <td>
-        <%= f.label :distance %>
-        <%= f.radio_button :distance_unit, "nm", checked: true %>
-        <%= f.label :distance_unit, "nm" %>
-        <%= f.radio_button :distance_unit, "km" %>
-        <%= f.label :distance_unit, "km" %>
-      </td>
-      <td><%= f.number_field :distance %></td>
-    </tr>
-    <tr>
-      <td><%= f.label :overnights %></td>
-      <td><%= f.number_field :overnights, in: 0..7 %></td>
-    </tr>
-    <tr>
-      <td><%= f.label :small_airport %></td>
-      <td><%= f.check_box :small_airport %></td>
-    </tr>
-    <tr>
-      <td><%= f.label :medium_airport %></td>
-      <td><%= f.check_box :medium_airport %></td>
-    </tr>
-    <tr>
-      <td><%= f.label :large_airport %></td>
-      <td><%= f.check_box :large_airport %></td>
-    </tr>
-    <tr>
-      <td><%= f.label :international_flight %></td>
-      <td><%= f.check_box :international_flight %></td>
-    </tr>
-    <tr>
-      <td><%= f.label :icao_airport %></td>
-      <td><%= f.check_box :icao_airport %></td>
-    </tr>
-  </table>
-
-  <%= link_to "Back", root_path, class:"btn btn-secondary" %>
-  <%= f.submit "Next", class: "btn btn-primary" %>
+  <div class="d-flex flex-column p-10">
+    <div><%= f.label :dep_airport_icao, "Departure Airport" %></div>
+    <div><%= f.collection_select :dep_airport_icao, Airport.order(:name), :icao, :name, class: "form-size" %></div>
+  </div>
+  <div class="d-flex flex-column p-10">
+    <div><%= f.label :eet_hour, "Estimated Enroute Time (hours)" %></div>
+    <div><%= f.number_field :eet_hour, size: "3" %></div>
+  </div>
+  <div class="d-flex flex-column p-10">
+    <div>
+      <%= f.label :distance %>
+      <%= f.radio_button :distance_unit, "nm", checked: true %>
+      <%= f.label :distance_unit, "nm" %>
+      <%= f.radio_button :distance_unit, "km" %>
+      <%= f.label :distance_unit, "km" %>
+    </div>
+    <div>
+      <%= f.number_field :distance, size: "3" %>
+    </div>
+  </div>
+  <div class="d-flex flex-column p-10">
+    <div><%= f.label :overnights %></div>
+    <div><%= f.number_field :overnights, in: 0..7, size: "3" %></div>
+  </div>
+  <div class="d-flex flex-row p-10">
+    <div><%= f.check_box :small_airport %></div>
+    <div><%= f.label :small_airport %></div>
+  </div>
+  <div class="d-flex flex-row p-10">
+    <%= f.check_box :medium_airport %>
+    <%= f.label :medium_airport %>
+  </div>
+  <div class="d-flex flex-row p-10">
+    <%= f.check_box :large_airport %>
+    <%= f.label :large_airport %>
+  </div>
+  <div class="d-flex flex-row p-10">
+    <%= f.check_box :international_flight %>
+    <%= f.label :international_flight %>
+  </div>
+  <div class="d-flex flex-row p-10">
+    <%= f.check_box :icao_airport %>
+    <%= f.label :icao_airport %>
+  </div>
+  <div class="d-flex flex-row justify-content-around container-trip-input-buttons mt-20">
+    <%= link_to "Back", root_path, class:"btn btn-secondary" %>
+    <%= f.submit "Next", class: "btn btn-primary" %>
+  </div>
 <% end %>
