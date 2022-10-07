@@ -9,6 +9,7 @@
   opacity: 0.8;
   color: $light;
   width: 100%;
+  padding-bottom: 30px;
   h1,h2 {
     color: $light;
   }
@@ -18,12 +19,17 @@
     font-weight: 500;
   }
 }
-.trip-input-form {
-  display: flex;
-  flex-direction: column;
-  background-color: red;
+label {
+  font-size: 1.25em;
+  font-weight: 400;
 }
-.trip-info-line {
+.container-trip-input-buttons {
+  width: 100%;
 }
-.trip-info-element {
+@media only screen and (min-width: 700px) {
+  .container-trip-info {
+    max-width: 700px;  
+    margin: 0 auto;
+  }
 }
+
