@@ -1,8 +1,8 @@
 <% require "normalize_country" %>
 
-<div class="to-container p-5">
-  <div class="to-container-flight-info m-20">
-    <div class="to-container-flight-summary p-20 mr-10">
+<div class="to-container">
+  <div class="to-container-flight-info">
+    <div class="to-container-flight-summary p-10 pb-20">
       <h1><em>Flight</em> Summary</h1>
     
       <h3>Departure Airport</h2>
@@ -19,23 +19,23 @@
       
       <h3>Filters</h3>
       <% if @trip_input.small_airport %>
-          <span class="tag tag-info">small airport</span>
+          <span class="tag tag-light">small airport</span>
       <% end %>
       <% if @trip_input.medium_airport %>
-          <span class="tag tag-info">medium airport</span>
+          <span class="tag tag-light">medium airport</span>
       <% end %>
-      <% if @trip_input.large_airport %>
-        <span class="tag tag-info">large airport</span>
+      <% if@trip_input.large_airport%>
+        <span class="tag tag-light">large airport</span>
       <% end %>
       <% if @trip_input.international_flight %>
-        <span class="tag tag-info">international</span>
+        <span class="tag tag-light">international</span>
       <% else %>
-        <span class="tag tag-info">national</span>
+        <span class="tag tag-light">national</span>
       <% end %>
       <% if @trip_input.icao_airport %>
-        <span class="tag tag-info">icao</span>
+        <span class="tag tag-light">icao</span>
       <% else %>
-        <span class="tag tag-info">all</span>
+        <span class="tag tag-light">all</span>
       <% end %>
       <span class="tag tag-danger">Limit <%= @limit %></span>
 
@@ -55,16 +55,27 @@
     <div class="to-container-airport-selection">
       <% i = 0 %>
       <% @filtered_airports.each do |airport| %>
-        <div class="to-as-flight p-20 m-20">
-          <div class="to-as-flight-element to-as-fe-airport-title">
+        <div class="to-as-flight">
+          <div class="to-as-fe-airport-title">
             <div class="m-5"><%= "#{NormalizeCountry(Airport.find_by(icao: airport.icao).country, :to => :emoji)} #{airport.name}" %></div>
-            <div class="tag tag-info m-5"><%= "#{airport.icao}" %></div>
+            <div class="to-as-flight-element">
+            <div class="tag tag-light m-5"><%= "#{airport.icao}" %></div>
             <% if !airport.local_code.nil? %>
-              <div class="tag tag-info m-5"><%= "#{airport.local_code}" %></div>
+              <div class="tag tag-light m-5"><%= "#{airport.local_code}" %></div>
             <% end %>
-            <div class="tag tag-info m-5"><%= "#{distance_convert(airport.distance, @trip_input.distance_unit)} #{@trip_input.distance_unit}" %></div>
-            <div class="tag tag-info m-5"><%= airport.airport_type %></div>
-            <div class="tag tag-info m-5"><%= "#{airport.altitude} ft" %></div>
+            <div class="tag tag-light m-5"><%= "#{distance_convert(airport.distance, @trip_input.distance_unit)} #{@trip_input.distance_unit}" %></div>
+            <div class="tag tag-light m-5">
+              <% case airport.airport_type %>
+              <% when "small_airport" %>
+                <%= "small" %>
+              <% when "medium_airport" %>
+                <%= "medium" %>
+              <% when "large_airport" %>
+                <%= "large" %>
+              <% end %>
+            </div>
+            <div class="tag tag-light m-5"><%= "#{airport.altitude} ft" %></div>
+          </div>
           </div>
 
           <h3>Outgoing Weather</h3>

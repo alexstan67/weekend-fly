@@ -1,19 +1,13 @@
 .to-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  //background-color: yellow;
   color: $light;
 }
 .to-container-flight-info {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
 }
 .to-container-flight-summary {
+  width: 100%;
   background-color: $dark;
-  border-radius: $border-radius;
-  opacity: 0.8;
   em {
     color: #FF8600;
     font-style: normal;
@@ -27,37 +21,40 @@
   }
 }
 .to-container-map {
-  width: 60%;
-  background-color: $dark;
-  opacity: 0.8;
-  border-radius: $border-radius;
+  height: 70vh;
+  width: 100%;
 }
 .to-container-airport-selection{
   display: flex;
   flex-direction: column;
-  border-radius: $border-radius;
-  opacity: 0.8;
+  width: 100%;
+  flex-wrap: wrap;
 }
 .to-as-flight {
   display: flex;
-  flex-direction: column;
-  //border: 1px solid red;
-  border-radius: $border-radius;
-  background-color: $dark;
+  flex-direction: column; 
+  width: fit-content;
+  width: 100%;
+  background-color: $color1;
+  h3 {
+    color: $color3;
+  }
 }
 .to-as-flight-element{
   display: flex;
   flex-direction: row;
-  width: fit-content;
+  overflow: auto;
+  align-items: center;
   table, th, td{
     border-collapse: collapse;
-    border: 1px solid;
-    font-size: 12px;
+    border: 1px dotted;
+    font-size: 0.8em;
+    color: $color3;
   }
 }
 .to-as-fe-airport-title {
-  border: 1px solid $light;
-  border-radius: $border-radius;
+  color: $color1;
+  background-color: $color2;
 }
 .to-cell-weather-success {
   opacity: 0.8;
@@ -84,4 +81,35 @@
 }
 .to-as-accommodation{
 
+}
+@media only screen and (min-width: 700px) {
+  .to-container-flight-info {
+    flex-direction: row;
+  }
+  .to-container-flight-summary {
+    border-radius: $border-radius;
+    max-width: 350px;
+    margin: 10px;
+  }
+  .to-container-map {
+    border-radius: $border-radius;
+    margin: 10px;
+    height: auto;
+  }
+  .to-as-flight {
+    border-radius: $border-radius;
+    padding: 10px;
+    margin: 10px;
+    max-width: 800px;
+    width: fit-content;
+  }
+  .to-as-flight-element{
+  }
+  .to-as-fe-airport-title {
+    border-radius: $border-radius;
+  }
+  .to-container-airport-selection{
+    flex-direction: unset;
+    justify-content: space-between;
+  }
 }
