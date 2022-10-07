@@ -1,8 +1,8 @@
 <% require "normalize_country" %>
 
-<div class="to-container p-5">
-  <div class="to-container-flight-info m-20">
-    <div class="to-container-flight-summary p-20 mr-10">
+<div class="to-container">
+  <div class="to-container-flight-info">
+    <div class="to-container-flight-summary p-10 pb-20">
       <h1><em>Flight</em> Summary</h1>
     
       <h3>Departure Airport</h2>
@@ -55,7 +55,7 @@
     <div class="to-container-airport-selection">
       <% i = 0 %>
       <% @filtered_airports.each do |airport| %>
-        <div class="to-as-flight p-20 m-20">
+        <div class="to-as-flight p-10">
           <div class="to-as-flight-element to-as-fe-airport-title">
             <div class="m-5"><%= "#{NormalizeCountry(Airport.find_by(icao: airport.icao).country, :to => :emoji)} #{airport.name}" %></div>
             <div class="tag tag-info m-5"><%= "#{airport.icao}" %></div>
