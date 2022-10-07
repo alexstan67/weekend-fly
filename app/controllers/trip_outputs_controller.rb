@@ -9,7 +9,7 @@ class TripOutputsController < ApplicationController
     @errors_label = []
     @errors_label[1] = "Flight back Impossible today with no overnights"
     @errors_label[2] = "No destination airport found"
-    @limit = 3
+    @limit = 15
 
     # We load logged in user last Trip_input data
     @trip_input = TripInput.where(user_id: current_user.id).order(id: :desc).first
