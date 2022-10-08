@@ -50,6 +50,7 @@
     border: 1px dotted;
     font-size: 0.8em;
     color: $color3;
+    text-align: center;
   }
 }
 .to-as-fe-airport-title {
@@ -102,6 +103,7 @@
     margin: 10px;
     max-width: 800px;
     width: fit-content;
+    box-shadow: 5px 5px 5px #888;
   }
   .to-as-flight-element{
   }
@@ -110,6 +112,6 @@
   }
   .to-container-airport-selection{
     flex-direction: unset;
-    justify-content: space-between;
+    justify-content: space-evenly;
   }
 }

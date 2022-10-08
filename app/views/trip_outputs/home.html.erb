@@ -78,7 +78,7 @@
           </div>
           </div>
 
-          <h3>Outgoing Weather</h3>
+          <h3>Weather to destination</h3>
           <div class="to-as-flight-element">
             <table>
               <tr>
@@ -96,7 +96,7 @@
                 <% end %>
               </tr>
               <tr>
-                <th></th>
+                <th>UTC</th>
                 <% @fly_out_dep.each do |fly_out_dep| %> 
                   <th><%= fly_out_dep[:time_unit] %></th>
                 <% end %>
@@ -154,7 +154,7 @@
             </table>
           </div>
 
-          <h3>Ingoing Weather</h3>
+          <h3>Weather back from destination</h3>
           <div class="to-as-flight-element">
             <table>
               <tr>
@@ -167,7 +167,7 @@
                   <% elsif global_score == 2 %>
                     <td><div class="to-cell-weather-danger"><%= global_score %></div></td>
                   <% else %>
-                    <td>NA</td>
+                    <td>N/A</td>
                   <% end %>
                 <% end %>
               </tr>
