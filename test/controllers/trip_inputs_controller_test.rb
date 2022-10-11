@@ -35,6 +35,16 @@ class TripInputsControllerTest < ActionDispatch::IntegrationTest
     assert_no_difference('TripInput.count') do
       post trip_inputs_path, params: { trip_input: { user_id: @user.id, dep_airport_icao: "ZZZZ", eet_hour: 2, distance: 100, distance_unit: "nm", overnights: 2, small_airport: true, medium_airport: true, large_airport: false, international_flight: true}}
     end
-
   end
+
+  test "should not create new as no airport type chosen" do
+    login_as users(:robert)
+    get new_trip_input_url
+    assert_response :success
+
+    assert_no_difference('TripInput.count') do
+      post trip_inputs_path, params: { trip_input: { user_id: @user.id, dep_airport_icao: "ELLX", eet_hour: 2, distance: 100, distance_unit: "nm", overnights: 2, small_airport: false, medium_airport: false, large_airport: false, international_flight: true}}
+    end
+  end
+
 end
