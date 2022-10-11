@@ -19,4 +19,11 @@ class TripInput < ApplicationRecord
   validates_inclusion_of :large_airport, in: [true, false]
   validates_inclusion_of :international_flight, in: [true, false]
   validates_inclusion_of :icao_airport, in: [true, false]
+  validate :check_at_least_one_airport_type
+
+  def check_at_least_one_airport_type
+    if small_airport == false && medium_airport == false  && large_airport == false
+      errors.add("Airport type:", "Please choose at least one airport type")
+    end
+  end
 end
