@@ -164,8 +164,12 @@ class TripOutputsController < ApplicationController
     # --- Fly out arrival airport weather (Landing)
     # ---------------------------------------------
     unless @errors.count > 0
-      # We load the markers for the map
+      # We load the gps position of home airport to center the map
+      @home_marker = { lat: Airport.find_by( icao: @trip_input.dep_airport_icao ).latitude, lon: Airport.find_by( icao: @trip_input.dep_airport_icao ).longitude }
+
+      # We load the destination airport markers for the map
       @markers = []
+
       @filtered_airports.each do |airport|
         hash = { lat: airport.latitude, lon: airport.longitude, info_window: render_to_string(partial: "info_window", locals: {airport: airport}) }
         @markers << hash
