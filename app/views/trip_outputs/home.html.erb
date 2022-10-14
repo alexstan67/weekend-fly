@@ -44,7 +44,12 @@
       </div>
 
     </div>
-    <div class="to-container-map" data-controller="osm" data-osm-target="map" data-osm-markers-value="<%= @markers.to_json %> data-osm-departure-value="<%= @home_marker.to_json %>">
+    <div  class="to-container-map" \
+          data-controller="osm" \
+          data-osm-target="map" \
+          data-osm-markers-value="<%= @markers.to_json %>" \
+          data-osm-center-value="<%= @center_map.to_json %>" \
+          data-osm-radius-value="<%= @map_radius %>">
     </div>
   </div>
   

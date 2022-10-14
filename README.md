@@ -24,7 +24,7 @@ Create a .env file with following keys:
 
 `MAIL_SMTP_SERVER=`
 
-`MAPBOX_API_KEY=`
+`MAPBOX_API_KEY=(deprecated)`
 
 `bundle install`
 
