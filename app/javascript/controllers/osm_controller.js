@@ -11,10 +11,10 @@ export default class extends Controller {
 
   connect() {
     console.log("Openstreetmap connected!")
-    this.displayMap();
+    this.#displayMap();
   }
 
-  displayMap() {
+  #displayMap() {
     // Variables
     let markersTable = [];
  
@@ -37,8 +37,8 @@ export default class extends Controller {
 
     // We display a circle radius representing the chosen distance
     var circle = L.circle([this.centerValue[0].lat, this.centerValue[0].lon], {
-      color: 'red',
-      fillColor: '#f03',
+      color: '#FF8600',
+      fillColor: '#FF8600',
       fillOpacity: 0.2,
       radius: this.radiusValue
     }).addTo(this.map);
@@ -46,7 +46,15 @@ export default class extends Controller {
     // We display the destination airports markers and assign a popup
     this.markersValue.forEach((airport) => {
       // We create a marker for each airport
-      var marker = L.marker([airport.lat, airport.lon]).addTo(this.map);
+      //var marker = L.marker([airport.lat, airport.lon]).addTo(this.map);
+      var iconDestination = L.icon({
+      iconUrl: airport.image_url,
+      iconSize:     [50, 50], // size of the icon
+      iconAnchor:   [25, 49], // point of the icon which will correspond to marker's location
+      popupAnchor:  [0, -50] // point from which the popup should open relative to the iconAnchor
+      });
+
+      marker = L.marker([airport.lat, airport.lon], {icon: iconDestination}).addTo(this.map);
 
       // We add the marker to a table in order used to fit the view on the markers
       markersTable.push(marker);
@@ -62,7 +70,7 @@ export default class extends Controller {
     this.map.fitBounds(group.getBounds().pad(0.5));
   }
   
-  disconnect(){
+  #disconnect(){
     this.map.remove()
   }
 }

@@ -175,7 +175,7 @@ class TripOutputsController < ApplicationController
       @markers = []
 
       @filtered_airports.each do |airport|
-        hash = { lat: airport.latitude, lon: airport.longitude, info_window: render_to_string(partial: "info_window", locals: {airport: airport}) }
+        hash = { lat: airport.latitude, lon: airport.longitude, info_window: render_to_string(partial: "info_window", locals: {airport: airport}), image_url: helpers.image_url("plane.png") }
         @markers << hash
       end
 
