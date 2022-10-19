@@ -9,7 +9,7 @@ class TripOutputsController < ApplicationController
     @errors_label = []
     @errors_label[1] = "Flight back Impossible today with no overnights"
     @errors_label[2] = "No destination airport found"
-    @limit = 15
+    @limit = 5
 
     # We load logged in user last Trip_input data
     @trip_input = TripInput.where(user_id: current_user.id).order(id: :desc).first
@@ -164,12 +164,24 @@ class TripOutputsController < ApplicationController
     # --- Fly out arrival airport weather (Landing)
     # ---------------------------------------------
     unless @errors.count > 0
-      # We load the markers for the map
+
+      # --------------------------------------------
+      # -- We load data for openstreetmap
+      #---------------------------------------------
+      # We load the gps position of home airport to center the map
+      @center_map = [{ lat: Airport.find_by( icao: @trip_input.dep_airport_icao ).latitude, lon: Airport.find_by( icao: @trip_input.dep_airport_icao ).longitude }]
+
+      # We load the destination airport markers for the map
       @markers = []
+
       @filtered_airports.each do |airport|
-        hash = { lat: airport.latitude, lon: airport.longitude, info_window: render_to_string(partial: "info_window", locals: {airport: airport}) }
+        hash = { lat: airport.latitude, lon: airport.longitude, info_window: render_to_string(partial: "info_window", locals: {airport: airport}), image_url: helpers.image_url("plane.png") }
         @markers << hash
       end
+
+      # We compute the map radius distance in meters
+      @map_radius = distance_nm * 1.852 * 1000
+      #---------------------------------------------
 
       # Variable init
       @fly_out_arr = []
