@@ -1,13 +1,23 @@
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = [ "button" ];
+  static targets = ["notice"];
 
   connect() {
-    console.log("alerts_controller.js connected");
+    console.log("Alerts connected!");
+    setTimeout(() => {
+      this.fadeOut();
+    }, 5000);
+    setTimeout(() => {
+      this.close();
+    }, 7000);
   }
+
+  fadeOut() {
+    this.noticeTarget.classList.add("alert-fadeout");
+  }
+
   close() {
-    console.log("Button click");
-    this.buttonTarget.parentNode.removeChild(this.buttonTarget);
+    this.noticeTarget.parentNode.removeChild(this.noticeTarget);
   }
 }
