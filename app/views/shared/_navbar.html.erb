@@ -23,11 +23,9 @@
         <%= link_to "Sign Up", new_user_registration_path, class:"btn btn-primary" %>
       <% end %>
     </div>
-    <div class="dropdown" data-controller="burger">
-      <button class="dropbtn btn-burger-light ml-5 mr-5" data-action="click->burger#menu">
-        <%= image_tag("burger-light.svg", alt: "Menu button") %>
-      </button>
-      <div class="dropdown-content dropdown-list-right" data-burger-target="menu">
+    <div data-controller="burger" data-action="click->burger#menu">
+      <%= image_tag("burger-light.svg", alt: "Menu button", class: "btn-burger") %>
+      <nav class="burger-menu-content hidden" data-burger-target="menu">
         <% if user_signed_in? %>
           <% if !TripInput.find_by(user_id: current_user.id).nil? %>
             <%= link_to "Last Trip", trip_outputs_home_path %>
@@ -39,7 +37,7 @@
           <%= link_to "Sign In", new_user_session_path %>
           <%= link_to "Sign Up", new_user_registration_path %>
         <% end %>
-      </div>
+      </nav>
     </div>
   </div>
 </nav>
