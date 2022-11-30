@@ -1,13 +1,18 @@
 .alerts {
-  padding: 5px 15px 5px 0px;
+  width: 100%;
+  padding: 0.5em 1em 0.5em 0em;
   position: fixed;
-  top: 65px;
+  top: 64px;
   z-index: 1000;
-  border-radius: $border-radius;
   display: flex;
   align-items: center;
+  opacity: 0.95;
 }
-.alerts-dismss {
+.alert-fadeout {
+  opacity: 0;
+  transition: 2s;
+}
+.alert-dismiss {
   display: none;
   visibility: hidden;
 }
