@@ -1,0 +1,31 @@
+.burger-menu-content {
+  position: absolute;
+  left: 0px;
+  top: 64px;
+  //height: 100%;
+  width: 100%;
+  z-index: 20;
+  background-color: $secondary;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+.burger-menu-content a {
+  text-decoration: none;
+  color: var(--dark);
+  padding: 10px 0px;
+  font-size: 1.25em;
+}
+.burger-menu-content a:visited {
+  color: $dark;
+}
+.burger-menu-content a:hover {
+  //background-color: $light;
+  color: $info;
+}
+.btn-burger {
+  transition: 0.25s;
+  font-size: 1em;
+  cursor: pointer;
+  width: fit-content;
+}

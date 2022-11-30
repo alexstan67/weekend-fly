@@ -1,14 +1,14 @@
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from "@hotwired/stimulus";
 
 // Connects to data-controller="burger"
 export default class extends Controller {
-  static targets = [ "menu" ];
+  static targets = ["menu"];
 
   connect() {
     console.log("Burger connected!");
   }
 
   menu() {
-    this.menuTarget.classList.toggle("show");
+    this.menuTarget.classList.toggle("hidden");
   }
 }
