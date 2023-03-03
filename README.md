@@ -7,7 +7,7 @@ For General Aviation fellows, find a destination !
 # Weekend Fly
 
 ## Requirements
-* ruby 3.0.3
+* ruby 3.1.3
 * rails 7.0.3
 * bundler
 
